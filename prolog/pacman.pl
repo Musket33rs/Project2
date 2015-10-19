@@ -44,29 +44,29 @@ super_food(3,3).
 
 %precondition for primitive actions
 %move for pacman
-poss(moveUp,S):- at(pacman, X, Y0, S),
+poss(moveUp,S):- at(P, X, Y0, S),
 				 Y is Y0 + 1,
 				 \+at(ghost,X,Y,S),
 				 \+wall(X,Y),
-				 at(pacman, X, Y, S).
+				 at(P, X, Y, S).
 
-poss(moveDown(Y),S):- at(pacman, X, Y0, S),
+poss(moveDown(Y),S):- at(P, X, Y0, S),
 					  Y is Y0 - 1,
 					  \+at(ghost,X,Y,S),
 					  \+wall(X,Y),
-					  at(pacman, X, Y, S).
+					  at(P, X, Y, S).
 
-poss(moveLeft(X),S):- at(pacman, X0, Y, S),
+poss(moveLeft(X),S):- at(P, X0, Y, S),
 					  X is X0 - 1,
 					  \+at(ghost,X,Y,S),
 					  \+wall(X,Y),
-					  at(pacman, X, Y, S).
+					  at(P, X, Y, S).
 
-poss(moveRight(X),S):- at(pacman, X0, Y, S),
+poss(moveRight(X),S):- at(P, X0, Y, S),
 					  X is X0 - 1,
 					  \+at(ghost,X,Y,S),
 					  \+wall(X,Y),
-					  at(pacman, X, Y, S).
+					  at(P, X, Y, S).
 
 
 
@@ -107,6 +107,7 @@ poss(eat_ghost(X,Y),S):- at(pacman, X1, Y1, S),
 % Success state axioms
 % win if my score is bigger than 0 at the end
 % win(score, end, )
+
 at(Pacman, X, Y, do(A,S)):-
 	at(Pacman, X0, Y0, S),
 	( 
