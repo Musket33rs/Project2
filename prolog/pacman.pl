@@ -5,7 +5,7 @@
 %at(Ghost, X, Y, Ghost_scared, S).
 
 at(pacman, 1, 1, s0).
-at(ghost, 1, 4, normal, s0).
+%at(ghost, 1, 4, s0).
 
 
 % what agents is at position X Y
@@ -16,6 +16,24 @@ at(ghost, 1, 4, normal, s0).
 wall(2,2).
 wall(3,2).
 wall(2,4).
+
+wall(0,0).
+wall(0,1).
+wall(0,2).
+wall(0,3).
+wall(0,4).
+wall(0,5).
+
+wall(1,0).
+wall(1,5).
+wall(2,0).
+wall(2,5).
+wall(3,0).
+wall(3,5).
+wall(4,0).
+wall(4,5).
+wall(5,5).
+
 
 food(1,2).
 food(1,3).
@@ -34,15 +52,23 @@ super_food(3,3).
 %precondition for primitive actions
 %move for pacman
 poss(move(X,Y),S):- at(pacman, X1, Y1, S),
+
 	% pacman is either a +-1 of X
-	( X is X1+1 ; X1 is X1-1 ),
-	% pacman is either a +-1 of Y
-	( Y is Y1+1 ; Y is Y1-1 ),
+	( (X is X1+1 ; X is X1-1 );
+		% or standing in X = X1, therefore Y cannot be the same
+		(X is X1) -> ( Y is Y1+1 ; Y is Y1-1)),
+
+	% pacman is either a +-1 of Y or standing in Y = Y1
+	( Y is Y1+1 ; Y is Y1-1 ;
+		% or standing in X = X1 to move Y cannot be the same
+		(Y is Y1) -> ( X is X1+1 ; X is X1-1)),
+
 	% there is no ghost at X Y position
 	\+ at(ghost, X, Y, S),
+
 	% not a wall
 	\+ wall(X,Y).
-
+/*
 poss(eat_food(X,Y),S):-  at(pacman, X1, Y1, S),
 	% pacman is either a +-1 of X
 	( X is X1+1 ; X is X1-1 ),
@@ -51,7 +77,7 @@ poss(eat_food(X,Y),S):-  at(pacman, X1, Y1, S),
 	% there is food at X Y
 	food(X,Y),
 	% there is no ghost or ghost is scared
-	\+ at(_, X, Y, normal, S);
+	\+ at(_, X, Y, normal, S);*\
 	at(_, X, Y, scared, S).
 
 poss(eat_super_food(X,Y),S):-  at(pacman, X1, Y1, S),
@@ -72,6 +98,35 @@ poss(eat_ghost(X,Y),S):- at(pacman, X1, Y1, S),
 	( Y is Y1+1 ; Y is Y1-1 ),
 	% ghost at X Y is scared, (at(G, X, Y, S)),(ghost_scared).
 	(at(_, X, Y, scared, S)).
+*/
+
+% Success state axioms
+% win if my score is bigger than 0 at the end
+% win(score, end, )
+at(Pacman, X, Y, do(A,S)):-
+	at(Pacman, X0, Y0, S),
+	( (A = move(X,Y)),
+		(X is X0+1 ; X is X0-1 );
+		( (X is X0) -> ( Y is Y0+1 ; Y is Y0-1) ),
+
+		( Y is Y0+1 ; Y is Y0-1 );
+		( (Y is Y0) -> ( X is X0+1 ; X is X0-1) )
+	)
+
+	;
+
+	(
+		at(Pacman, X, Y, S),
+		\+A=move(_,_)
+	).
+
+%Legal axioms
+legal(s0).
+legal(do(A,S)) :- legal(S),poss(A,S).
+
+
+
+
 
 
 
