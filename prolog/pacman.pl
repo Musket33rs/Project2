@@ -51,23 +51,30 @@ super_food(3,3).
 
 %precondition for primitive actions
 %move for pacman
-poss(move(X,Y),S):- at(pacman, X1, Y1, S),
+poss(moveUp,S):- at(_, X, Y0, S),
+				 Y is Y0 + 1,
+				\+at(ghost,X,Y,S),
+				\+wall(X,Y),
+				at(_, X, Y, S).
 
-	% pacman is either a +-1 of X
-	( (X is X1+1 ; X is X1-1 );
-		% or standing in X = X1, therefore Y cannot be the same
-		(X is X1) -> ( Y is Y1+1 ; Y is Y1-1)),
+poss(moveDown(Y),S):- at(pacman, X, Y0, S),
+					  Y is Y0 - 1,
+					  \+at(ghost,X,Y,S),
+					  \+wall(X,Y).
 
-	% pacman is either a +-1 of Y or standing in Y = Y1
-	( Y is Y1+1 ; Y is Y1-1 ;
-		% or standing in X = X1 to move Y cannot be the same
-		(Y is Y1) -> ( X is X1+1 ; X is X1-1)),
+poss(moveLeft(X),S):- at(pacman, X0, Y, S),
+					  X is X0 - 1,
+					  \+at(ghost,X,Y,S),
+					  \+wall(X,Y).
+poss(moveRight(X),S):- at(pacman, X0, Y, S),
+					  X is X0 - 1,
+					  \+at(ghost,X,Y,S),
+					  \+wall(X,Y).
 
-	% there is no ghost at X Y position
-	\+ at(ghost, X, Y, S),
 
-	% not a wall
-	\+ wall(X,Y).
+
+
+
 /*
 poss(eat_food(X,Y),S):-  at(pacman, X1, Y1, S),
 	% pacman is either a +-1 of X
@@ -105,9 +112,8 @@ poss(eat_ghost(X,Y),S):- at(pacman, X1, Y1, S),
 % win(score, end, )
 at(Pacman, X, Y, do(A,S)):-
 	at(Pacman, X0, Y0, S),
-	( (A = move(X,Y)),
-		(X is X0+1 ; X is X0-1 );
-		( (X is X0) -> ( Y is Y0+1 ; Y is Y0-1) ),
+	( 
+	(A = move(X,Y),(X is X0+1 ; X is X0-1 ),((X is X0) -> ( Y is Y0+1 ; Y is Y0-1) ),
 
 		( Y is Y0+1 ; Y is Y0-1 );
 		( (Y is Y0) -> ( X is X0+1 ; X is X0-1) )
@@ -122,7 +128,7 @@ at(Pacman, X, Y, do(A,S)):-
 
 %Legal axioms
 legal(s0).
-legal(do(A,S)) :- legal(S),poss(A,S).
+legal(do(A,S)) :- legal(S), poss(A,S).
 
 
 
