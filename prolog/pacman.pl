@@ -1,15 +1,8 @@
-%initial conditions
 %Pacman at X Y in situation S
 %at(Pacman, X, Y, S).
 %Ghost at X Y is scared/normal in situation S
 %at(Ghost, X, Y, Ghost_scared, S).
 
-at(pacman, 1, 1, s0).
-%at(ghost, 1, 4, s0).
-
-
-% what agents is at position X Y
-% ghost_status().
 
 
 
@@ -51,25 +44,29 @@ super_food(3,3).
 
 %precondition for primitive actions
 %move for pacman
-poss(moveUp,S):- at(_, X, Y0, S),
+poss(moveUp,S):- at(pacman, X, Y0, S),
 				 Y is Y0 + 1,
-				\+at(ghost,X,Y,S),
-				\+wall(X,Y),
-				at(_, X, Y, S).
+				 \+at(ghost,X,Y,S),
+				 \+wall(X,Y),
+				 at(pacman, X, Y, S).
 
 poss(moveDown(Y),S):- at(pacman, X, Y0, S),
 					  Y is Y0 - 1,
 					  \+at(ghost,X,Y,S),
-					  \+wall(X,Y).
+					  \+wall(X,Y),
+					  at(pacman, X, Y, S).
 
 poss(moveLeft(X),S):- at(pacman, X0, Y, S),
 					  X is X0 - 1,
 					  \+at(ghost,X,Y,S),
-					  \+wall(X,Y).
+					  \+wall(X,Y),
+					  at(pacman, X, Y, S).
+
 poss(moveRight(X),S):- at(pacman, X0, Y, S),
 					  X is X0 - 1,
 					  \+at(ghost,X,Y,S),
-					  \+wall(X,Y).
+					  \+wall(X,Y),
+					  at(pacman, X, Y, S).
 
 
 
@@ -113,17 +110,20 @@ poss(eat_ghost(X,Y),S):- at(pacman, X1, Y1, S),
 at(Pacman, X, Y, do(A,S)):-
 	at(Pacman, X0, Y0, S),
 	( 
-	(A = move(X,Y),(X is X0+1 ; X is X0-1 ),((X is X0) -> ( Y is Y0+1 ; Y is Y0-1) ),
-
-		( Y is Y0+1 ; Y is Y0-1 );
-		( (Y is Y0) -> ( X is X0+1 ; X is X0-1) )
+		(A =  moveUp, Y is Y0+1);
+		(A =  moveDown, Y is Y0-1);
+		(A =  moveRight, X is X0+1);
+		(A =  moveLeft, X is X0-1)
 	)
 
 	;
 
 	(
 		at(Pacman, X, Y, S),
-		\+A=move(_,_)
+		\+A=moveUp,
+		\+A=moveDown,
+		\+A=moveRight,
+		\+A=moveLeft
 	).
 
 %Legal axioms
@@ -133,7 +133,13 @@ legal(do(A,S)) :- legal(S), poss(A,S).
 
 
 
+%initial conditions
+at(pacman, 1, 1, s0).
+%at(ghost, 1, 4, s0).
 
+
+% what agents is at position X Y
+% ghost_status().
 
 
 
