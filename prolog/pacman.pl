@@ -123,13 +123,3 @@ at(Pacman, X, Y, do(A,S)):-
 %Legal axioms
 legal(s0).
 legal(do(A,S)) :- legal(S),poss(A,S).
-
-
-
-
-
-
-
-
-
-
