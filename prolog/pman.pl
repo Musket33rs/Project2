@@ -1,11 +1,16 @@
 % pman.pl
+%﻿ Tou Lee 656128
+% Jaime Martinez 642231
+%
 % assumptions
 % Connected points ar adjacent up,down,left or right, unless there is a wall.
 % Only need to check if a move is legal checking if two coordinates are
-% connected. To check if they are connecter, the point cannot be a wall, and
+% connected. To check if they are connected, the point cannot be a wall, and
 % be adjacent.
 % To eat a ghost it has to be scared, which is defined in the initial condition
 % assuming each iteration is a new problem.
+% Eating the food should not be the goal, but for pacman to be at a certain
+% position
 
 %initial condition
 pmanAt(1,1,s0).
