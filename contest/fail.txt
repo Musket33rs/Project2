@@ -1,0 +1,18 @@
+
+Red team myTeam with {}:
+Loading Team: myTeam.py
+Arguments: {}
+None 0 0.1
+None 2 0.1
+[<player1.OffensiveAgent instance at 0x7ff908e6e5f0>, <player1.OffensiveAgent instance at 0x7ff908e6e7a0>]
+None 0 0.1
+None 2 0.1
+
+Blue team baselineTeam with {}:
+Loading Team: baselineTeam.py
+Arguments: {}
+Red team starts
+((1, 2), [(17, 6), (21, 1), (21, 4), (21, 6), (21, 8), (21, 12), (22, 4), (22, 10), (23, 1), (23, 6), (23, 12), (24, 6), (24, 7), (24, 12), (26, 1), (26, 3), (26, 14), (28, 7), (28, 13), (28, 14)])
+foodheur:  ((1, 2), [(17, 6), (21, 1), (21, 4), (21, 6), (21, 8), (21, 12), (22, 4), (22, 10), (23, 1), (23, 6), (23, 12), (24, 6), (24, 7), (24, 12), (26, 1), (26, 3), (26, 14), (28, 7), (28, 13), (28, 14)])
+isGoalState  ((1, 2), [])
+[]

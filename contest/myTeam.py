@@ -102,9 +102,9 @@ class OffensiveAgent(CaptureAgent):
     def chooseAction(self,gameState):
         actions = gameState.getLegalActions(self.index)
         obs = self.getCurrentObservation()
-        food =  self.getFood(obs)
+        food =  self.getFood(obs).asList(True)
         fsp = FoodSearchProblem(obs,self.index,food)
         a = search.aStarSearch(fsp,foodHeuristic)
         print a
     #    print actions
-        return actions[1]
+        return a

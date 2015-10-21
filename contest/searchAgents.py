@@ -149,10 +149,12 @@ class FoodSearchProblem:
         self.heuristicInfo = {} # A dictionary for the heuristic to store information
 
     def getStartState(self):
+        print self.start
         return self.start
 
     def isGoalState(self, state):
-        return state[1].count() == 0
+        print 'isGoalState ',state
+        return len(state[1]) == 0
 
     def getSuccessors(self, state):
         "Returns successor states, the actions they require, and a cost of 1."
@@ -166,6 +168,7 @@ class FoodSearchProblem:
                 nextFood = state[1].copy()
                 nextFood[nextx][nexty] = False
                 successors.append( ( ((nextx, nexty), nextFood), direction, 1) )
+        #print successors
         return successors
 
     def getCostOfActions(self, actions):
@@ -213,9 +216,10 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
+    print 'foodheur: ',state
     "*** YOUR CODE HERE ***"
     pos = [position] #[state[0]]
-    goal = foodGrid.asList()
+    goal = foodGrid
     heuristic = 0
     possibilities = util.PriorityQueue()
     while len(goal)>0:
