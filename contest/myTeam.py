@@ -16,7 +16,7 @@ from captureAgents import CaptureAgent
 import random, time, util
 from game import Directions
 import game
-from searchAgents import FoodSearchProblem, foodHeuristic
+from searchAgents import FoodSearchProblem, foodHeuristic, AStarFoodSearchAgent
 import search
 
 #################
@@ -100,11 +100,29 @@ class OffensiveAgent(CaptureAgent):
 
 
     def chooseAction(self,gameState):
-        actions = gameState.getLegalActions(self.index)
+        #actions = gameState.getLegalActions(self.index)
+        #current state
         obs = self.getCurrentObservation()
-        food =  self.getFood(obs).asList(True)
-        fsp = FoodSearchProblem(obs,self.index,food)
-        a = search.aStarSearch(fsp,foodHeuristic)
-        print a
-    #    print actions
-        return a
+        food =  self.getFood(obs)
+        foodList = food.asList(True)
+    #    goal = None
+        dist = []
+        mypos = gameState.getAgentState(self.index).getPosition()
+        for point in foodList:
+            print point, mypos
+            dist += self.getMazeDistance(mypos,point )
+        goal = min(dist)
+        print goal
+        fsp = FoodSearchProblem(obs,self.index,food,goal)
+
+        #searchAgent = AStarFoodSearchAgent(fsp,foodHeuristic)
+    #    searchAgent.registerInitialState(obs,fsp)
+        a = search.aStarSearch(fsp, foodHeuristic)
+        return a[0]
+    def closest(self, gameState, point):
+        print point
+        mypos = gameState.getAgentState(self.index).getPosition()
+        mydist = self.getMazeDistance(mypos, point)
+        mindist = min(self.getMazeDistance(gameState.getAgentState(t).getPosition(), point)
+                      for t in self.getTeam(gameState))
+        return mydist == mindist

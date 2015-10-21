@@ -94,7 +94,7 @@ class SearchAgent(Agent):
         self.searchType = globals()[prob]
         print('[SearchAgent] using problem type ' + prob)
 
-    def registerInitialState(self, state):
+    def registerInitialState(self, state,problem):
         """
         This is the first time that the agent sees the layout of the game
         board. Here, we choose a path to the goal. In this phase, the agent
@@ -104,12 +104,13 @@ class SearchAgent(Agent):
         state: a GameState object (pacman.py)
         """
         if self.searchFunction == None: raise Exception, "No search function provided for SearchAgent"
-        starttime = time.time()
-        problem = self.searchType(state) # Makes a new search problem
+        #starttime = time.time()
+    #    problem = self.searchType(state) # Makes a new search problem
+        print 'register ', problem
         self.actions  = self.searchFunction(problem) # Find a path
-        totalCost = problem.getCostOfActions(self.actions)
-        print('Path found with total cost of %d in %.1f seconds' % (totalCost, time.time() - starttime))
-        if '_expanded' in dir(problem): print('Search nodes expanded: %d' % problem._expanded)
+    #    totalCost = problem.getCostOfActions(self.actions)
+    #    print('Path found with total cost of %d in %.1f seconds' % (totalCost, time.time() - starttime))
+    #    if '_expanded' in dir(problem): print('Search nodes expanded: %d' % problem._expanded)
 
     def getAction(self, state):
         """
@@ -131,7 +132,12 @@ class SearchAgent(Agent):
 #####################################################
 # This portion is incomplete.  Time to write code!  #
 #####################################################
-
+class AStarFoodSearchAgent(SearchAgent):
+    "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
+    def __init__(self,prob,heur):
+        self.searchFunction = search.aStarSearch(prob, heur)
+        self.searchType = FoodSearchProblem
+        #self.actions  = self.searchFunction(prob) # Find a path
 class FoodSearchProblem:
     """
     A search problem associated with finding the a path that collects all of the
@@ -141,20 +147,20 @@ class FoodSearchProblem:
       pacmanPosition: a tuple (x,y) of integers specifying Pacman's position
       foodGrid:       a Grid (see game.py) of either True or False, specifying remaining food
     """
-    def __init__(self, currentGameState,agentIndex,food):
+    def __init__(self, currentGameState,agentIndex,food,goal):
         self.start = (currentGameState.getAgentPosition(agentIndex), food)
         self.walls = currentGameState.getWalls()
         self.currentGameState = currentGameState
         self._expanded = 0 # DO NOT CHANGE
         self.heuristicInfo = {} # A dictionary for the heuristic to store information
+        self.goal = goal
 
     def getStartState(self):
-        print self.start
         return self.start
 
-    def isGoalState(self, state):
-        print 'isGoalState ',state
-        return len(state[1]) == 0
+    def isGoalState(self,state):
+
+        return state[0] == self.goal
 
     def getSuccessors(self, state):
         "Returns successor states, the actions they require, and a cost of 1."
@@ -216,10 +222,9 @@ def foodHeuristic(state, problem):
     problem.heuristicInfo['wallCount']
     """
     position, foodGrid = state
-    print 'foodheur: ',state
     "*** YOUR CODE HERE ***"
     pos = [position] #[state[0]]
-    goal = foodGrid
+    goal = foodGrid.asList(True)
     heuristic = 0
     possibilities = util.PriorityQueue()
     while len(goal)>0:
