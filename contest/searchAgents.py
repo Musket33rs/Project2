@@ -190,7 +190,11 @@ class FoodSearchProblem:
                 return 999999
             cost += 1
         return cost
-
+def manhattanHeuristic(position, problem, info={}):
+    "The Manhattan distance heuristic for a PositionSearchProblem"
+    xy1 = position[0]
+    xy2 = problem.goal
+    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
 
 def foodHeuristic(state, problem):

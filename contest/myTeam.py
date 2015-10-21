@@ -16,7 +16,7 @@ from captureAgents import CaptureAgent
 import random, time, util
 from game import Directions
 import game
-from searchAgents import FoodSearchProblem, foodHeuristic, AStarFoodSearchAgent
+from searchAgents import FoodSearchProblem, foodHeuristic, manhattanHeuristic
 import search
 
 #################
@@ -40,7 +40,7 @@ def createTeam(firstIndex, secondIndex, isRed):
   behavior is what you want for the nightly contest.
   """
   # The following line is an example only; feel free to change it.
-  return [OffensiveAgent(firstIndex), OffensiveAgent(secondIndex)]
+  return [OffensiveAgent(firstIndex), DummyAgent(secondIndex)]
 
 ##########
 # Agents #
@@ -93,32 +93,54 @@ class DummyAgent(CaptureAgent):
 class OffensiveAgent(CaptureAgent):
 
     def __init__( self, index, timeForComputing = .1 ):
+        self.allFood = 0
+        self.first = True
         CaptureAgent.__init__( self, index, timeForComputing)
         print self.red, index, timeForComputing
         self.visibleAgents = []
-
+        self.foodLeft = 0
+        self.foodEaten = 0
+        self.isPacman = False
+        self.ret =0
 
     def chooseAction(self,gameState):
         #actions = gameState.getLegalActions(self.index)
         #current state
-        obs = self.getCurrentObservation()
-        food =  self.getFood(obs)
-        foodList = food.asList(True)
-    #    goal = None
-        goal = (0,0)
-        mypos = gameState.getAgentState(self.index).getPosition()
-        #for point in foodList:
-        if self.index == 0:
-            goal= self.closest(obs,foodList,mypos)
-        else:
-            goal= self.farthest(obs,foodList,mypos)
+        currObs = self.getCurrentObservation()
+        self.isPacman = currObs.getAgentState(self.index).isPacman
+        opponents = self.getOpponents(currObs)
+        visible =[]
+        for x in opponents:
+            visible += [currObs.getAgentPosition(x)]
 
-        fsp = FoodSearchProblem(obs,self.index,food,goal)
+        food =  self.getFood(currObs)
+        defendedFood = self.getFoodYouAreDefending(currObs).asList(True)
+        foodList = food.asList(True)
+        if self.first:
+            self.allFood = len(foodList)
+            self.first = False
+        self.foodLeft = len(foodList)
+        self.foodEaten = self.allFood - self.foodLeft
+        mypos = gameState.getAgentState(self.index).getPosition()
+        print self.ret
+        if self.ret <= 5:
+            goal= self.closest(currObs,foodList,mypos)
+        elif self.isPacman :
+            #defend and return food
+            goal = self.closest(currObs,defendedFood,mypos)
+            self.foodEaten = 0
+
+
+        fsp = FoodSearchProblem(currObs,self.index,food,goal)
+    
         #searchAgent = AStarFoodSearchAgent(fsp,foodHeuristic)
     #    searchAgent.registerInitialState(obs,fsp)
-        a = search.aStarSearch(fsp, foodHeuristic)
+        a = search.aStarSearch(fsp, manhattanHeuristic)
 
         return a[0]
+
+    def getGoal(self,gameState):
+        return (0,0)
     def closest(self, gameState, foodList,mypos):
         #print point
         dist = []
