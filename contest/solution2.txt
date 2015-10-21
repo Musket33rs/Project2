@@ -8,7 +8,8 @@ problem 'STRIPS-LOG-X-1' defined
 
 
 
-Cueing down from goal distance:   74 into depth [1]
+Cueing down from goal distance:   75 into depth [1]
+                                  74            [1]
                                   73            [1]
                                   72            [1]
                                   71            [1]
@@ -86,86 +87,87 @@ Cueing down from goal distance:   74 into depth [1]
 
 ff: found legal plan as follows
 
-step    0: MOVE P_1_3 P_1_4
-        1: MOVE P_1_4 P_1_5
-        2: MOVE P_1_5 P_1_6
-        3: MOVE P_1_6 P_1_7
-        4: MOVE P_1_7 P_1_8
-        5: MOVE P_1_8 P_1_9
-        6: MOVE P_1_9 P_1_10
-        7: MOVE P_1_10 P_1_11
-        8: MOVE P_1_11 P_1_12
-        9: MOVE P_1_12 P_1_13
-       10: MOVE P_1_13 P_1_14
-       11: MOVE P_1_14 P_2_14
-       12: MOVE P_2_14 P_3_14
-       13: MOVE P_3_14 P_3_13
-       14: MOVE P_3_13 P_3_12
-       15: MOVE P_3_12 P_3_11
-       16: MOVE P_3_11 P_3_10
-       17: MOVE P_3_10 P_4_10
-       18: MOVE P_4_10 P_4_9
-       19: MOVE P_4_9 P_4_8
-       20: MOVE P_4_8 P_4_7
-       21: MOVE P_4_7 P_5_7
-       22: MOVE P_5_7 P_5_6
-       23: MOVE P_5_6 P_5_5
-       24: MOVE P_5_5 P_6_5
-       25: MOVE P_6_5 P_7_5
-       26: MOVE P_7_5 P_7_6
-       27: MOVE P_7_6 P_8_6
-       28: MOVE P_8_6 P_9_6
-       29: MOVE P_9_6 P_10_6
-       30: MOVE P_10_6 P_11_6
-       31: MOVE P_11_6 P_12_6
-       32: MOVE P_12_6 P_13_6
-       33: MOVE P_13_6 P_13_5
-       34: MOVE P_13_5 P_14_5
-       35: MOVE P_14_5 P_15_5
-       36: MOVE P_15_5 P_15_4
-       37: MOVE P_15_4 P_16_4
-       38: MOVE P_16_4 P_17_4
-       39: MOVE P_17_4 P_17_3
-       40: MOVE P_17_3 P_18_3
-       41: MOVE P_18_3 P_19_3
-       42: MOVE P_19_3 P_19_2
-       43: MOVE P_19_2 P_20_2
-       44: MOVE P_20_2 P_21_2
-       45: MOVE P_21_2 P_22_2
-       46: MOVE P_22_2 P_23_2
-       47: MOVE P_23_2 P_24_2
-       48: MOVE P_24_2 P_25_2
-       49: MOVE P_25_2 P_25_3
-       50: MOVE P_25_3 P_25_4
-       51: MOVE P_25_4 P_25_5
-       52: MOVE P_25_5 P_26_5
-       53: MOVE P_26_5 P_27_5
-       54: MOVE P_27_5 P_28_5
-       55: MOVE P_28_5 P_28_4
-       56: MOVE P_28_4 P_28_3
-       57: MOVE P_28_3 P_28_2
-       58: MOVE P_28_2 P_28_1
-       59: MOVE P_28_1 P_29_1
-       60: MOVE P_29_1 P_30_1
-       61: MOVE P_30_1 P_30_2
-       62: MOVE P_30_2 P_30_3
-       63: MOVE P_30_3 P_30_4
-       64: MOVE P_30_4 P_30_5
-       65: MOVE P_30_5 P_30_6
-       66: MOVE P_30_6 P_30_7
-       67: MOVE P_30_7 P_30_8
-       68: MOVE P_30_8 P_30_9
-       69: MOVE P_30_9 P_30_10
-       70: MOVE P_30_10 P_30_11
-       71: MOVE P_30_11 P_30_12
-       72: MOVE P_30_12 P_30_13
-       73: MOVE P_30_13 P_30_14
+step    0: MOVE P_1_2 P_1_3
+        1: MOVE P_1_3 P_1_4
+        2: MOVE P_1_4 P_1_5
+        3: MOVE P_1_5 P_1_6
+        4: MOVE P_1_6 P_1_7
+        5: MOVE P_1_7 P_1_8
+        6: MOVE P_1_8 P_1_9
+        7: MOVE P_1_9 P_1_10
+        8: MOVE P_1_10 P_1_11
+        9: MOVE P_1_11 P_1_12
+       10: MOVE P_1_12 P_1_13
+       11: MOVE P_1_13 P_1_14
+       12: MOVE P_1_14 P_2_14
+       13: MOVE P_2_14 P_3_14
+       14: MOVE P_3_14 P_3_13
+       15: MOVE P_3_13 P_3_12
+       16: MOVE P_3_12 P_3_11
+       17: MOVE P_3_11 P_3_10
+       18: MOVE P_3_10 P_4_10
+       19: MOVE P_4_10 P_4_9
+       20: MOVE P_4_9 P_4_8
+       21: MOVE P_4_8 P_4_7
+       22: MOVE P_4_7 P_5_7
+       23: MOVE P_5_7 P_5_6
+       24: MOVE P_5_6 P_5_5
+       25: MOVE P_5_5 P_6_5
+       26: MOVE P_6_5 P_7_5
+       27: MOVE P_7_5 P_7_6
+       28: MOVE P_7_6 P_8_6
+       29: MOVE P_8_6 P_9_6
+       30: MOVE P_9_6 P_10_6
+       31: MOVE P_10_6 P_11_6
+       32: MOVE P_11_6 P_12_6
+       33: MOVE P_12_6 P_13_6
+       34: MOVE P_13_6 P_13_5
+       35: MOVE P_13_5 P_14_5
+       36: MOVE P_14_5 P_15_5
+       37: MOVE P_15_5 P_15_4
+       38: MOVE P_15_4 P_16_4
+       39: MOVE P_16_4 P_17_4
+       40: MOVE P_17_4 P_17_3
+       41: MOVE P_17_3 P_18_3
+       42: MOVE P_18_3 P_19_3
+       43: MOVE P_19_3 P_19_2
+       44: MOVE P_19_2 P_20_2
+       45: MOVE P_20_2 P_21_2
+       46: MOVE P_21_2 P_22_2
+       47: MOVE P_22_2 P_23_2
+       48: MOVE P_23_2 P_24_2
+       49: MOVE P_24_2 P_25_2
+       50: MOVE P_25_2 P_25_3
+       51: MOVE P_25_3 P_25_4
+       52: MOVE P_25_4 P_25_5
+       53: MOVE P_25_5 P_26_5
+       54: MOVE P_26_5 P_27_5
+       55: MOVE P_27_5 P_28_5
+       56: MOVE P_28_5 P_28_4
+       57: MOVE P_28_4 P_28_3
+       58: MOVE P_28_3 P_28_2
+       59: MOVE P_28_2 P_28_1
+       60: MOVE P_28_1 P_29_1
+       61: MOVE P_29_1 P_30_1
+       62: MOVE P_30_1 P_30_2
+       63: MOVE P_30_2 P_30_3
+       64: MOVE P_30_3 P_30_4
+       65: MOVE P_30_4 P_30_5
+       66: MOVE P_30_5 P_30_6
+       67: MOVE P_30_6 P_30_7
+       68: MOVE P_30_7 P_30_8
+       69: MOVE P_30_8 P_30_9
+       70: MOVE P_30_9 P_30_10
+       71: MOVE P_30_10 P_30_11
+       72: MOVE P_30_11 P_30_12
+       73: MOVE P_30_12 P_30_13
+       74: MOVE P_30_13 P_30_14
      
 
 time spent:    0.00 seconds instantiating 1088 easy, 0 hard action templates
                0.00 seconds reachability analysis, yielding 250 facts and 546 actions
                0.00 seconds creating final representation with 250 relevant facts
                0.00 seconds building connectivity graph
-               0.00 seconds searching, evaluating 75 states, to a max depth of 1
+               0.00 seconds searching, evaluating 76 states, to a max depth of 1
                0.00 seconds total time
 
