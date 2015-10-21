@@ -93,8 +93,8 @@ step    0: MOVE P_16_11 P_16_10
      
 
 time spent:    0.00 seconds instantiating 1629 easy, 0 hard action templates
-               0.00 seconds reachability analysis, yielding 300 facts and 571 actions
-               0.00 seconds creating final representation with 299 relevant facts
+               0.00 seconds reachability analysis, yielding 299 facts and 571 actions
+               0.00 seconds creating final representation with 298 relevant facts
                0.00 seconds building connectivity graph
                0.00 seconds searching, evaluating 40 states, to a max depth of 1
                0.00 seconds total time
