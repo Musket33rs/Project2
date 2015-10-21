@@ -94,7 +94,7 @@ class FFAgent(CaptureAgent):
             if obs.getAgentState(i).isPacman is False:
                 result += '(ghost_at p_%d_%d) ' % (x, y)
             else:
-                result += '(PACMAN_AT p_%d_%d) ' % (x, y)
+                result += '(pacman_at p_%d_%d) ' % (x, y)
 
         #
         # Food.
