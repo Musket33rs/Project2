@@ -50,18 +50,20 @@ class FFAgent(CaptureAgent):
         result = ''
         for (x, y) in locations:
             result += 'p_%d_%d ' % (x, y)
+        result += '- position'
 
         return result
 
     def createPDDLfluents(self):
+        # init
         result = ''
         obs = self.getCurrentObservation()
     
         (myx, myy) = obs.getAgentPosition(self.index)
         if obs.getAgentState(self.index).isPacman is True:
-            result += '(AGENT_AT p_%d_%d) ' % (myx, myy)
+            result += '(pacman_at p_%d_%d) ' % (myx, myy)
         else:
-            result += '(AGENT_AT p_%d_%d) ' % (myx, myy)
+            result += '(ghost_at p_%d_%d) ' % (myx, myy)
 
         #
         # Model opponent team if visible
@@ -75,11 +77,11 @@ class FFAgent(CaptureAgent):
             (x, y) = obs.getAgentPosition(i)
             if obs.getAgentState(i).isPacman is False:
                 result += '(enemy_ghost_at p_%d_%d) ' % (x, y)
-                if distances[i] < 2:
-                    result += '(ghost_near p_%d_%d) ' % (x, y)
-            else:
-                self.visibleAgents.append(i)
-                result += '(enemy_pacman_at p_%d_%d) ' % (x, y)
+                # if distances[i] < 2:
+                #     result += '(ghost_near p_%d_%d) ' % (x, y)
+            # else:
+            #     self.visibleAgents.append(i)
+            #     result += '(enemy_pacman_at p_%d_%d) ' % (x, y)
 
         team = self.getTeam(obs)
         teamPos = []
@@ -121,31 +123,43 @@ class FFAgent(CaptureAgent):
         return result
 
     def createPDDLgoal(self):
-        result = ''
         obs = self.getCurrentObservation()
-        food = self.getFood(obs).asList(True)
-        for (x, y) in food:
-            if self.closest(obs, (x, y)):
-                result += '(not (food_at p_%d_%d)) ' % (x,y)
+        if obs.getAgentState(self.index).isPacman is False:
+            result = '(ghost_at p_30_14)'
+        else:
+            result = '(pacman_at p_30_14)' 
 
-        capsule = self.getCapsules(obs)
-        for (x, y) in capsule:
-            if self.closest(obs, (x, y)):
-                result += '(not (power_at p_%d_%d)) ' % (x,y)
-        grid = obs.getWalls()
-        goal_x = grid.width/2 + int(not self.red)
-        pos = obs.getAgentState(self.index).getPosition()
-        result += '(AGENT_AT p_%d_%d) ' % (goal_x,
-                                            min([y for y in range(grid.height)
-                                                 if not grid[goal_x][y]],
-                                                 key=lambda y: self.getMazeDistance((goal_x, y), pos)))
+        # result = ''
+        # obs = self.getCurrentObservation()
+        # food = self.getFood(obs).asList(True)
+        # for (x, y) in food:
+        #     if self.closest(obs, (x, y)):
+        #         result += '(not (food_at p_%d_%d)) ' % (x,y)
+
+        # capsule = self.getCapsules(obs)
+        # for (x, y) in capsule:
+        #     if self.closest(obs, (x, y)):
+        #         result += '(not (power_at p_%d_%d)) ' % (x,y)
+        # grid = obs.getWalls()
+        # goal_x = grid.width/2 + int(not self.red)
+        # pos = obs.getAgentState(self.index).getPosition()
+        # # result += '(AGENT_AT p_%d_%d) ' % (goal_x,
+        # result += '(ghost_at p_%d_%d) ' % (goal_x,
+        #                                     min([y for y in range(grid.height)
+        #                                          if not grid[goal_x][y]],
+        #                                          key=lambda y: self.getMazeDistance((goal_x, y), pos)))
         return result
 
     def generatePDDLproblem(self):
+        obs = self.getCurrentObservation()
         lines = list()
         lines.append("(define (problem strips-log-x-1)\n")
         # lines.append("   (:domain pacman-strips)\n")
-        lines.append("   (:domain pacman)\n")
+        # lines.append("   (:domain pacman)\n")
+        if obs.getAgentState(self.index).isPacman is False:
+            lines.append("   (:domain ghost)\n")
+        else:
+            lines.append("   (:domain pacman)\n")
         lines.append("   (:objects \n")
         lines.append(self.createPDDLobjects() + "\n")
         lines.append("   )\n")
@@ -171,11 +185,11 @@ class FFAgent(CaptureAgent):
         #
         else:
             lines.append("   (:goal \n")
-            lines.append("     ( and (pacman_at p_1_4)  \n")
+            # lines.append("     ( and (pacman_at p_1_4)  \n")
             # lines.append("     ( and (not (pacman_dead))  \n")
             lines.append(self.createPDDLgoal() + "\n")
             lines.append("     )\n")
-            lines.append("   )\n")
+            # lines.append("   )\n")
 
         lines.append(")\n")
         cd = os.path.dirname(os.path.abspath(__file__))
@@ -183,9 +197,18 @@ class FFAgent(CaptureAgent):
             f.writelines(lines)
 
     def runPlanner(self):
+        obs = self.getCurrentObservation()
         cd = os.path.dirname(os.path.abspath(__file__))
-        os.system("./ff -s 2 -o {dir}/domain.pddl -f {dir}/problem{idx}.pddl > {dir}/solution{idx}.txt"
-                  .format(dir=cd, idx=self.index))
+        # os.system("./ff -s 2 -o {dir}/domain.pddl -f {dir}/problem{idx}.pddl > {dir}/solution{idx}.txt"
+        # os.system("./ff -o {dir}/domain.pddl -f {dir}/problem0.pddl > {dir}/solution{idx}.txt"
+        #           .format(dir=cd, idx=self.index))
+
+        if obs.getAgentState(self.index).isPacman is False:
+            os.system("./ff -o {dir}/ghost_domain.pddl -f {dir}/problem{idx}.pddl > {dir}/solution{idx}.txt"
+                .format(dir=cd, idx=self.index))
+        else:
+            os.system("./ff -o {dir}/pacman_domain.pddl -f {dir}/problem{idx}.pddl > {dir}/solution{idx}.txt"
+                .format(dir=cd, idx=self.index))
 
     def parseSolution(self):
         cd = os.path.dirname(os.path.abspath(__file__))
@@ -200,13 +223,14 @@ class FFAgent(CaptureAgent):
                 command_splitted = command.split(' ')
                 x = int(command_splitted[3].split('_')[1])
                 y = int(command_splitted[3].split('_')[2])
+
                 return (x, y)
         #
         # Empty Plan, Use STOP action, return current Position
         #
             if line.find("ff: goal can be simplified to TRUE. The empty plan solves it") != -1:
                 return self.getCurrentObservation().getAgentPosition(self.index)
-            print lines
+            # print lines
 
     def chooseAction(self, gameState):
         """

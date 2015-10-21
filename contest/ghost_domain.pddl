@@ -1,5 +1,5 @@
-﻿
-(define (domain ghost)
+
+﻿(define (domain ghost)
 
     (:requirements
         :typing
@@ -21,6 +21,8 @@
 
         (ghost_scared)
         (pacman_dead)
+
+        (enemy_ghost_at ?x - position)
 
     )
 
