@@ -9,3 +9,35 @@ Check an agent i
 
 
 
+------World stuff---------
+CHEESE_AT = food_at
+
+CAPSULE_AT = power_at
+
+CAN_GO = connected
+
+-----Self team stuff------
+
+PHANTOM_AT
+
+PACMAN_AT
+
+--agent this ffagent either pacman or ghost
+AGENT_AT
+
+
+-----Enemy Team stuff-----
+
+ENEMY_PHANTOM
+
+ENEMY_PACMAN_AT
+
+--if distance of enemy team is < 2 
+PHANTOM_NEAR
+
+
+------Goal Stuff 
+
+
+PACMAN_DEAD = pacman_dead
+

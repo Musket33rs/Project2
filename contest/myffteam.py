@@ -74,12 +74,12 @@ class FFAgent(CaptureAgent):
                 continue
             (x, y) = obs.getAgentPosition(i)
             if obs.getAgentState(i).isPacman is False:
-                result += '(ENEMY_PHANTOM_AT p_%d_%d) ' % (x, y)
+                result += '(enemy_ghost_at p_%d_%d) ' % (x, y)
                 if distances[i] < 2:
-                    result += '(PHANTOM_NEAR p_%d_%d) ' % (x, y)
+                    result += '(ghost_near p_%d_%d) ' % (x, y)
             else:
                 self.visibleAgents.append(i)
-                result += '(ENEMY_PACMAN_AT p_%d_%d) ' % (x, y)
+                result += '(enemy_pacman_at p_%d_%d) ' % (x, y)
 
         team = self.getTeam(obs)
         teamPos = []
@@ -92,23 +92,23 @@ class FFAgent(CaptureAgent):
             teamPos.append((x, y))
 
             if obs.getAgentState(i).isPacman is False:
-                result += '(PHANTOM_AT p_%d_%d) ' % (x, y)
+                result += '(ghost_at p_%d_%d) ' % (x, y)
             else:
-                result += '(PACMAN_AT p_%d_%d) ' % (x, y)
+                result += '(pacman_at p_%d_%d) ' % (x, y)
 
         #
         # Food.
         #
         food = self.getFood(obs).asList(True)
         for (x, y) in food:
-            result += '(CHEESE_AT p_%d_%d) ' % (x, y)
+            result += '(food_at p_%d_%d) ' % (x, y)
 
         #
         # Capsule
         #
         capsule = self.getCapsules(obs)
         for (x, y) in capsule:
-            result += '(CAPSULE_AT p_%d_%d) ' % (x, y)
+            result += '(power_at p_%d_%d) ' % (x, y)
 
         grid = obs.getWalls()
         for y in range(grid.height):
@@ -117,7 +117,7 @@ class FFAgent(CaptureAgent):
                     continue
                 for dx, dy in [(-1, 0), (0, -1), (1, 0), (0, 1)]:
                     if (0 <= x + dx < grid.width) and (0 <= y + dy < grid.height) and not grid[x + dx][y + dy]:
-                        result += '(CAN_GO p_%d_%d p_%d_%d) ' % (x, y, x+dx, y+dy)
+                        result += '(connected p_%d_%d p_%d_%d) ' % (x, y, x+dx, y+dy)
         return result
 
     def createPDDLgoal(self):
@@ -126,12 +126,12 @@ class FFAgent(CaptureAgent):
         food = self.getFood(obs).asList(True)
         for (x, y) in food:
             if self.closest(obs, (x, y)):
-                result += '(not (CHEESE_AT p_%d_%d)) ' % (x,y)
+                result += '(not (food_at p_%d_%d)) ' % (x,y)
 
         capsule = self.getCapsules(obs)
         for (x, y) in capsule:
             if self.closest(obs, (x, y)):
-                result += '(not (CAPSULE_AT p_%d_%d)) ' % (x,y)
+                result += '(not (power_at p_%d_%d)) ' % (x,y)
         grid = obs.getWalls()
         goal_x = grid.width/2 + int(not self.red)
         pos = obs.getAgentState(self.index).getPosition()
@@ -159,7 +159,7 @@ class FFAgent(CaptureAgent):
         if obs.getAgentState(self.index).isPacman is False:
             lines.append("   (:goal \n")
             if len(self.visibleAgents) != 0:
-                lines.append("  (PACMAN_DEAD) \n")
+                lines.append("  (pacman_dead) \n")
             else:
                 lines.append("  ( and  \n")
                 lines.append(self.createPDDLgoal() + "\n")
@@ -170,7 +170,7 @@ class FFAgent(CaptureAgent):
         #
         else:
             lines.append("   (:goal \n")
-            lines.append("     ( and (not (PACMAN_DEAD))  \n")
+            lines.append("     ( and (not (pacman_dead))  \n")
             lines.append(self.createPDDLgoal() + "\n")
             lines.append("     )\n")
             lines.append("   )\n")
