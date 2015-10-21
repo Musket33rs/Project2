@@ -9,34 +9,33 @@
     )
 
     (:predicates
-        (ghostAt ?x - position)
-        (pacmanAt ?x - position)
+        (ghost_at ?x - position)
+        (pacman_at ?x - position)
         (connected ?x ?y - position)
-        (ghost-normal)
-        (pacman-alive)
-        (eat-pacman)
+        (ghost_scared)
+        (pacman_dead)
     
     )
 
     (:action move
         :parameters (?x ?y)
-        :precondition (and (ghostAt ?x) (connected ?x ?y) )
+        :precondition (and (ghost_at ?x) (connected ?x ?y) )
         :effect (and 
-                    (ghostAt ?y) 
-                    (not (ghostAt ?x))
+                    (ghost_at ?y) 
+                    (not (ghost_at ?x))
                 )
     )
     
     (:action moveToEatPacman
         :parameters (?x ?y)
-        :precondition (and (ghostAt ?x) (connected ?x ?y) (ghost-normal) (pacman-alive) (pacmanAt ?y))
+        :precondition (and (ghost_at ?x) (connected ?x ?y) (not(ghost_scared)) (pacman_at ?y))
         :effect (and 
-                    (ghostAt ?y)
-                    (pacmanAt p_11)
+                    (ghost_at ?y)
+                    (pacman_at p_11)
                     (eat-pacman)
-                    (not (ghostAt ?x))
-                    (not (pacmanAt ?y))
-                    (not (pacman-alive))
+                    (not (ghost_at ?x))
+                    (not (pacman_at ?y))
+                    (not (pacman_dead))
                 )
     )
     
