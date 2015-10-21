@@ -21,13 +21,13 @@
 
     (:action move 
         :parameters (?x ?y - position)
-        :precondition (and (pacman_at ?x) (connected ?x ?y) (is_free ?y))
-        :effect (and  (pacman_at ?y) (is_free ?x)
-                        ( not (pacman_at ?x))       
-                        (not (is_free ?y))
+        :precondition (and (pacman_at ?x) (connected ?x ?y) (not (ghost_at ?y)) )
+        :effect (and  (pacman_at ?y) 
+                      ( not (pacman_at ?x))       
+                        
                 )
     )
-    (:action moveEatFood 
+    (:action move_eat_food 
         :parameters (?x ?y - position)
         :precondition (and (pacman_at ?x) (connected ?x ?y) ( food_at ?y))
         :effect (and (pacman_at ?y) (is_free ?x)
@@ -35,15 +35,15 @@
                     (not (food_at ?y))
                 )
     )
-    (:action moveEatPower
+    (:action move_eat_power
         :parameters (?x ?y - position)
-        :precondition (and (pacman_at ?x) (connected ?x ?y) ( power_at ?y))
+        :precondition (and (pacman_at ?x) (connected ?x ?y) ( power_at ?y) (not (ghost_at ?y)))
         :effect (and (pacman_at ?y) (ghost_scared) (is_free ?x)
                     (not (pacman_at ?x))                
                     (not (power_at ?y))
                 )
     )
-    (:action moveEatGhost
+    (:action move_eat_ghost
         :parameters (?x ?y - position)
         :precondition (and (pacman_at ?x) (connected ?x ?y) ( ghost_at ?y) (ghost_scared))
         :effect (and (pacman_at ?y) (is_free ?x)

@@ -144,7 +144,8 @@ class FFAgent(CaptureAgent):
     def generatePDDLproblem(self):
         lines = list()
         lines.append("(define (problem strips-log-x-1)\n")
-        lines.append("   (:domain pacman-strips)\n")
+        # lines.append("   (:domain pacman-strips)\n")
+        lines.append("   (:domain pacman)\n")
         lines.append("   (:objects \n")
         lines.append(self.createPDDLobjects() + "\n")
         lines.append("   )\n")
@@ -170,7 +171,8 @@ class FFAgent(CaptureAgent):
         #
         else:
             lines.append("   (:goal \n")
-            lines.append("     ( and (not (pacman_dead))  \n")
+            lines.append("     ( and (pacman_at p_1_4)  \n")
+            # lines.append("     ( and (not (pacman_dead))  \n")
             lines.append(self.createPDDLgoal() + "\n")
             lines.append("     )\n")
             lines.append("   )\n")
@@ -202,9 +204,9 @@ class FFAgent(CaptureAgent):
         #
         # Empty Plan, Use STOP action, return current Position
         #
-        if line.find("ff: goal can be simplified to TRUE. The empty plan solves it") != -1:
-            return self.getCurrentObservation().getAgentPosition(self.index)
-        print lines
+            if line.find("ff: goal can be simplified to TRUE. The empty plan solves it") != -1:
+                return self.getCurrentObservation().getAgentPosition(self.index)
+            print lines
 
     def chooseAction(self, gameState):
         """

@@ -11,9 +11,15 @@
     (:predicates
         (ghost_at ?x - position)
         (pacman_at ?x - position)
+        
+        ;not really needed for the ghost domain
+        (food_at ?x - position)
+        (power_at ?x - position)
+        
         (connected ?x ?y - position)
         (ghost_scared)
         (pacman_dead)
+        
     
     )
 
@@ -31,17 +37,12 @@
         :precondition (and (ghost_at ?x) (connected ?x ?y) (not(ghost_scared)) (pacman_at ?y))
         :effect (and 
                     (ghost_at ?y)
-                    (pacman_at p_11)
-                    (eat-pacman)
+                    ;(pacman_at p_11)
                     (not (ghost_at ?x))
                     (not (pacman_at ?y))
-                    (not (pacman_dead))
+                    (pacman_dead)
                 )
     )
-    
-    
-    
-    
     
 )
 
