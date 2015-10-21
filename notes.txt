@@ -1,0 +1,11 @@
+Food and walls 
+methods getFood
+matrix[x][y]=true if there is food or otherwise wall
+
+
+Check an agent i 
+	-agent = state.data.agentStates[i]
+	agent.scaredTimer
+
+
+

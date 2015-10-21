@@ -12,12 +12,12 @@ poss(retroceder,S):-robot(X,S),
                     \+obstaculo(Y,S).
 
 poss(agregar_obstaculo(X),S):-robot(Y,S),
-							  (X is Y-1; X is Y+1),
-							  \+obstaculo(X,S). 
+							               (X is Y-1; X is Y+1),
+							               \+obstaculo(X,S). 
 
 poss(eliminar_obstaculo(X),S):-robot(Y,S),
-							  (X is Y-1; X is Y+1),
-							  obstaculo(X,S). 
+							                 (X is Y-1; X is Y+1),
+							                 obstaculo(X,S). 
 
 
  /*successor state axioms for primitive fluents */
