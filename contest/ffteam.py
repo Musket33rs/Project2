@@ -57,7 +57,7 @@ class FFAgent(CaptureAgent):
     def createPDDLfluents(self):
         result = ''
         obs = self.getCurrentObservation()
-    
+
         (myx, myy) = obs.getAgentPosition(self.index)
         if obs.getAgentState(self.index).isPacman is True:
             result += '(AGENT_AT p_%d_%d) ' % (myx, myy)
@@ -203,8 +203,8 @@ class FFAgent(CaptureAgent):
         #
         # Empty Plan, Use STOP action, return current Position
         #
-        if line.find("ff: goal can be simplified to TRUE. The empty plan solves it") != -1:
-            return self.getCurrentObservation().getAgentPosition(self.index)
+            if line.find("ff: goal can be simplified to TRUE. The empty plan solves it") != -1:
+                return self.getCurrentObservation().getAgentPosition(self.index)
         print lines
 
     def chooseAction(self, gameState):
@@ -220,8 +220,9 @@ class FFAgent(CaptureAgent):
         (newx, newy) = self.parseSolution()
 
         print "Target: ", newx, newy
-         
+
         for a in actions:
+            print a
             succ = self.getSuccessor(gameState, a)
             if succ.getAgentPosition(self.index) == (newx, newy):
                 bestAction = a
