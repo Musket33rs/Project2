@@ -39,7 +39,6 @@ def createTeam(firstIndex, secondIndex, isRed):
   any extra arguments, so you should make sure that the default
   behavior is what you want for the nightly contest.
   """
-  print  [OffensiveAgent(firstIndex), OffensiveAgent(secondIndex)]
   # The following line is an example only; feel free to change it.
   return [OffensiveAgent(firstIndex), OffensiveAgent(secondIndex)]
 
@@ -106,23 +105,35 @@ class OffensiveAgent(CaptureAgent):
         food =  self.getFood(obs)
         foodList = food.asList(True)
     #    goal = None
-        dist = []
+        goal = (0,0)
         mypos = gameState.getAgentState(self.index).getPosition()
-        for point in foodList:
-            print point, mypos
-            dist += self.getMazeDistance(mypos,point )
-        goal = min(dist)
-        print goal
-        fsp = FoodSearchProblem(obs,self.index,food,goal)
+        #for point in foodList:
+        if self.index == 0:
+            goal= self.closest(obs,foodList,mypos)
+        else:
+            goal= self.farthest(obs,foodList,mypos)
 
+        fsp = FoodSearchProblem(obs,self.index,food,goal)
         #searchAgent = AStarFoodSearchAgent(fsp,foodHeuristic)
     #    searchAgent.registerInitialState(obs,fsp)
         a = search.aStarSearch(fsp, foodHeuristic)
+
         return a[0]
-    def closest(self, gameState, point):
-        print point
-        mypos = gameState.getAgentState(self.index).getPosition()
-        mydist = self.getMazeDistance(mypos, point)
-        mindist = min(self.getMazeDistance(gameState.getAgentState(t).getPosition(), point)
-                      for t in self.getTeam(gameState))
-        return mydist == mindist
+    def closest(self, gameState, foodList,mypos):
+        #print point
+        dist = []
+        for point in foodList:
+            mydist = self.getMazeDistance(mypos, point)
+            #print mydist
+            dist+= [(point,self.getMazeDistance(mypos, point))]
+        minp,_ =  min(dist, key = lambda t: t[1])
+        return minp
+    def farthest(self, gameState, foodList,mypos):
+        #print point
+        dist = []
+        for point in foodList:
+            mydist = self.getMazeDistance(mypos, point)
+            #print mydist
+            dist+= [(point,self.getMazeDistance(mypos, point))]
+        minp,_ =  max(dist, key = lambda t: t[1])
+        return minp
