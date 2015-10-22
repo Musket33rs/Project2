@@ -24,3 +24,5 @@ The overall performance of the planner is not too bad as the calculation of the
 plan is pretty fast. One improvement would be to modify the implementation
 of A* to modify the heuristic when a ghost, or some other condition, applies at
 a certain position on the grid.
+
+DEFENSIVE AGENT HERE
