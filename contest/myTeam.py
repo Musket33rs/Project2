@@ -106,6 +106,11 @@ class OffensiveAgent(CaptureAgent):
     def chooseAction(self,gameState):
         #actions = gameState.getLegalActions(self.index)
         #current state
+        # self.generateProblem()
+        # self.generateGoal()
+        # self.
+
+
         currObs = self.getCurrentObservation()
         self.isPacman = currObs.getAgentState(self.index).isPacman
         opponents = self.getOpponents(currObs)

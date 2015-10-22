@@ -75,6 +75,8 @@ class FFAgent(CaptureAgent):
             if obs.getAgentPosition(i) is None:
                 continue
             (x, y) = obs.getAgentPosition(i)
+
+            # (x,y) is non benefitial 
             if obs.getAgentState(i).isPacman is False:
                 result += '(enemy_ghost_at p_%d_%d) ' % (x, y)
                 # if distances[i] < 2:
@@ -209,6 +211,7 @@ class FFAgent(CaptureAgent):
         else:
             os.system("./ff -o {dir}/pacman_domain.pddl -f {dir}/problem{idx}.pddl > {dir}/solution{idx}.txt"
                 .format(dir=cd, idx=self.index))
+        
 
     def parseSolution(self):
         cd = os.path.dirname(os.path.abspath(__file__))
