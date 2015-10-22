@@ -11,7 +11,6 @@
     (:predicates
         ( pacman_at ?x - position )
         ( connected ?x ?y - position )
-        ( is_free ?x - position)
         ( ghost_at ?x - position )
         ( food_at ?x - position )
         ( power_at ?x - position)
@@ -30,7 +29,7 @@
     (:action move_eat_food 
         :parameters (?x ?y - position)
         :precondition (and (pacman_at ?x) (connected ?x ?y) ( food_at ?y))
-        :effect (and (pacman_at ?y) (is_free ?x)
+        :effect (and (pacman_at ?y) 
                     (not (pacman_at ?x))                
                     (not (food_at ?y))
                 )
@@ -38,7 +37,7 @@
     (:action move_eat_power
         :parameters (?x ?y - position)
         :precondition (and (pacman_at ?x) (connected ?x ?y) ( power_at ?y) (not (ghost_at ?y)))
-        :effect (and (pacman_at ?y) (ghost_scared) (is_free ?x)
+        :effect (and (pacman_at ?y) (ghost_scared) 
                     (not (pacman_at ?x))                
                     (not (power_at ?y))
                 )

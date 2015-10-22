@@ -25,6 +25,7 @@ def createTeam(firstIndex, secondIndex, isRed):
   """
   # The following line is an example only; feel free to change it.
   return [OffensiveAgent(firstIndex), DefensiveAgent(secondIndex)]
+  # return [OffensiveAgent(firstIndex), DefensiveReflexAgent(secondIndex)]
 
 
 class OffensiveAgent(CaptureAgent):
@@ -138,10 +139,11 @@ class DefensiveAgent(OffensiveAgent):
     
     if self.visibleAgents[0] == None and self.visibleAgents[1] == None:
       # wander around 
-      closestFood = self.closest(defendedFood,self.position)
+      # closestFood = self.closest(defendedFood,self.position)
+      randomFood = random.choice(defendedFood)
       # defendingProblem = searchAgents.AnyFoodSearchProblem(currObs, self.index , defendedFood, closestFood,self.visibleAgents,opponents)
       # posProb = PositionSearchProblem(currObs, costFn = lambda x: 1, closestFood, start=None, warn=True, visualize=True)
-      
+      print "mypos, closestFood", currObs.getAgentPosition(self.index)," "
       defendingProblem = PositionSearchProblem(currObs, self.index, closestFood)
 
       
@@ -164,6 +166,7 @@ class DefensiveAgent(OffensiveAgent):
     
     
     actions = search.aStarSearch(defendingProblem,searchAgents.manhattanHeuristic)
+
     return actions[0]
 
   # def manhattanDist(xy1,xy2):
