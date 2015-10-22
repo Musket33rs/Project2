@@ -147,24 +147,26 @@ class FoodSearchProblem:
       pacmanPosition: a tuple (x,y) of integers specifying Pacman's position
       foodGrid:       a Grid (see game.py) of either True or False, specifying remaining food
     """
-    def __init__(self, currentGameState,agentIndex,food,goal,visible):
-        self.start = (currentGameState.getAgentPosition(agentIndex), food)
+    def __init__(self, currentGameState,agentIndex,defendingFood):
+        self.start = (currentGameState.getAgentPosition(agentIndex), defendingFood)
         self.agentIndex = agentIndex
         self.walls = currentGameState.getWalls()
-        self.currentGameState = currentGameState
+        # self.currentGameState = currentGameState
         self._expanded = 0 # DO NOT CHANGE
         self.heuristicInfo = {} # A dictionary for the heuristic to store information
-        print 'init_goal'
-        self.goal = goal
-        print 'init_goal' , goal
-        self.visible = visible
+        # print 'init_goal'
+        # self.goal = goal
+        # print 'init_goal' , goal
+        # self.visible = visible
 
     def getStartState(self):
+        print self.start
         return self.start
 
     def isGoalState(self,state):
         #print len(state[1].asList(True)),len( self.goal)
-        return len(state[1].asList(True)) <16
+        # return len(state[1].asList(True)) <16
+        return len(state[1])
 
     def getSuccessors(self, state):
         "Returns successor states, the actions they require, and a cost of 1."
@@ -192,22 +194,24 @@ class FoodSearchProblem:
             # figure out the next state and see whether it's legal
             dx, dy = Actions.directionToVector(action)
             x, y = int(x + dx), int(y + dy)
-            if self.walls[x][y] :
+            if self.walls[x][y]:
                 return 999999
-            elif  self.agentIndex ==0 and self.visible[0]!=None :
-                visPoint = self.visible[0]
-                distancia = myDistance(yo,visPoint)
-                print 'vis[0] dist', visPoint , distancia
-                if distancia < 2:
-                    return 999999
-            elif self.agentIndex ==0 and self.visible[1] != None:
-                visPoint = self.visible[1]
-                distancia = myDistance(yo,visPoint)
-                print 'vis[1] dist', visPoint , distancia
-                if distancia < 2 :
-                    return 99999
+            
             cost += 1
         return cost
+
+
+    def costOfPosition(self, position):
+        x,y = position
+        if(position.isPacman) and (self.timer>2):
+            return 0
+        elif position.Food:
+            return 1
+        elif self.walls[x][y]:
+            return 999999;
+        else:
+            return 2
+
 def manhattanHeuristic(position, problem, info={}):
     "The Manhattan distance heuristic for a PositionSearchProblem"
     xy1 = position
@@ -246,7 +250,8 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
     pos = [position] #[state[0]]
-    goal = foodGrid.asList(True)
+    # goal = foodGrid.asList(True)
+    goal = foodGrid
     heuristic = 0
     possibilities = util.PriorityQueue()
     while len(goal)>0:
@@ -303,7 +308,7 @@ class PositionSearchProblem(search.SearchProblem):
     Note: this search problem is fully specified; you should NOT change it.
     """
 
-    def __init__(self, gameState, costFn = lambda x: 1, goal=(1,1), start=None, warn=True, visualize=True):
+    def __init__(self, gameState, agentIndex, costFn = lambda x: 1, goal=(1,1), start=None, warn=True, visualize=True):
         """
         Stores the start and goal.
 
@@ -312,16 +317,17 @@ class PositionSearchProblem(search.SearchProblem):
         goal: A position in the gameState
         """
         self.walls = gameState.getWalls()
-        self.startState = gameState.getPacmanPosition()
+        self.startState = gameState.getAgentPosition(agentIndex)
+        # self.startState = gameState.getPacmanPosition()
         if start != None: self.startState = start
         self.goal = goal
         self.costFn = costFn
         self.visualize = visualize
-        if warn and (gameState.getNumFood() != 1 or not gameState.hasFood(*goal)):
-            print 'Warning: this does not look like a regular search maze'
+        # if warn and (gameState.getNumFood() != 1 or not gameState.hasFood(*goal)):
+        #     print 'Warning: this does not look like a regular search maze'
 
         # For display purposes
-        self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
+        # self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
 
     def getStartState(self):
         return self.startState
@@ -331,12 +337,12 @@ class PositionSearchProblem(search.SearchProblem):
         isGoal = state == self.goal
 
         # For display purposes only
-        if isGoal and self.visualize:
-            self._visitedlist.append(state)
-            import __main__
-            if '_display' in dir(__main__):
-                if 'drawExpandedCells' in dir(__main__._display): #@UndefinedVariable
-                    __main__._display.drawExpandedCells(self._visitedlist) #@UndefinedVariable
+        # if isGoal and self.visualize:
+        #     self._visitedlist.append(state)
+        #     import __main__
+        #     if '_display' in dir(__main__):
+        #         if 'drawExpandedCells' in dir(__main__._display): #@UndefinedVariable
+        #             __main__._display.drawExpandedCells(self._visitedlist) #@UndefinedVariable
 
         return isGoal
 
@@ -401,7 +407,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
     method.
     """
 
-    def __init__(self, gameState,agentIndex,food,goal,visible,opponents):
+    def __init__(self, gameState, agentIndex,food,goal,visible,opponents):
         "Stores information from the gameState.  You don't need to change this."
         # Store the food for later reference
         self.food = food
@@ -464,62 +470,110 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         return cost
 # ___________________________
 
-class WinningProblem:
-    """
-    A search problem associated with finding the a path that collects all of the
-    food (dots) in a Pacman game.
+# class DefendingProblem:
+    
+#     def __init__(self, currObs, guardIndex, defendedFood):
+    
+#         self.walls = currObs.getWalls()
+#         self.startPosition = currObs.getAgentPosition(guardIndex);
+#         self.defendedFood = defendedFood
+#         # self.goal = goal
+#         self.costFn = lambda X:1
+#         self.visualize = visualize
+#         # if warn and (gameState.getNumFood() != 1 or not gameState.hasFood(*goal)):
+#         #     print 'Warning: this does not look like a regular search maze'
 
-    A search state in this problem is a tuple ( pacmanPosition, foodGrid ) where
-      pacmanPosition: a tuple (x,y) of integers specifying Pacman's position
-      foodGrid:       a Grid (see game.py) of either True or False, specifying remaining food
-    """
-    def __init__(self, currentGameState, agentIndex):
-        self.start = (currentGameState.getAgentPosition(agentIndex), food)
-        self.agent = currentGameState.getAgentPosition(agentIndex)
-        self.currObs = currentGameState
-        self.walls = currentGameState.getWalls()
-        self.currentGameState = currentGameState
-        self._expanded = 0 # DO NOT CHANGE
-        self.heuristicInfo = {} # A dictionary for the heuristic to store information
+#         # For display purposes
+#         # self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
 
+#     def getStartPosition(self):
+#         return self.startPosition
 
-    def getStartState(self):
-        return self.start
+#     def isGoalState(self, state):
+#         if not self.defendedFood:
+#             return True
+        
+#         return False
 
-    def isGoalState(self,state):
-        # max score
-        # score  getFood score
-        # while getFood != 0 eat all food
-        self.agent.getFood(self.obs).asList(True).length
+#         # isGoal = state == self.goal
 
+#         # # For display purposes only
+#         # if isGoal and self.visualize:
+#         #     self._visitedlist.append(state)
+#         #     import __main__
+#         #     if '_display' in dir(__main__):
+#         #         if 'drawExpandedCells' in dir(__main__._display): #@UndefinedVariable
+#         #             __main__._display.drawExpandedCells(self._visitedlist) #@UndefinedVariable
 
-        return state[0] == self.goal
+#         return isGoal
 
-    def getSuccessors(self, state):
-        "Returns successor states, the actions they require, and a cost of 1."
-        successors = []
-        self._expanded += 1 # DO NOT CHANGE
-        for direction in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            x,y = state[0]
-            dx, dy = Actions.directionToVector(direction)
-            nextx, nexty = int(x + dx), int(y + dy)
-            if not self.walls[nextx][nexty]:
-                nextFood = state[1].copy()
-                nextFood[nextx][nexty] = False
-                successors.append( ( ((nextx, nexty), nextFood), direction, 1) )
-        #print successors
-        return successors
+#     def getSuccessors(self, state):
+#         """
+#         Returns successor states, the actions they require, and a cost of 1.
 
-    def getCostOfActions(self, actions):
-        """Returns the cost of a particular sequence of actions.  If those actions
-        include an illegal move, return 999999"""
-        x,y= self.getStartState()[0]
-        cost = 0
-        for action in actions:
-            # figure out the next state and see whether it's legal
-            dx, dy = Actions.directionToVector(action)
-            x, y = int(x + dx), int(y + dy)
-            if self.walls[x][y]:
-                return 999999
-            cost += 1
-        return cost
+#          As noted in search.py:
+#              For a given state, this should return a list of triples,
+#          (successor, action, stepCost), where 'successor' is a
+#          successor to the current state, 'action' is the action
+#          required to get there, and 'stepCost' is the incremental
+#          cost of expanding to that successor
+#         """
+
+#         successors = []
+#         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+#             x,y = state
+#             dx, dy = Actions.directionToVector(action)
+#             nextx, nexty = int(x + dx), int(y + dy)
+#             if not self.walls[nextx][nexty]:
+#                 nextState = (nextx, nexty)
+#                 cost = self.costFn(nextState)
+#                 successors.append( ( nextState, action, cost) )
+
+#         # Bookkeeping for display purposes
+#         self._expanded += 1 # DO NOT CHANGE
+#         if state not in self._visited:
+#             self._visited[state] = True
+#             self._visitedlist.append(state)
+
+#         return successors
+
+#     def getCostOfActions(self, actions):
+#         """
+#         Returns the cost of a particular sequence of actions. If those actions
+#         include an illegal move, return 999999.
+#         """
+#         if actions == None: return 999999
+#         x,y= self.getStartPosition()
+#         cost = 0
+#         for action in actions:
+#             # Check figure out the next state and see whether its' legal
+#             dx, dy = Actions.directionToVector(action)
+#             x, y = int(x + dx), int(y + dy)
+#             if self.walls[x][y]: return 999999
+#             cost += self.costFn((x,y))
+#         return cost
+
+# def defendingHeuristic(state, problem):
+
+#     position, foodGrid = state
+#     "*** YOUR CODE HERE ***"
+#     pos = [position] #[state[0]]
+#     # goal = foodGrid.asList(True)
+#     goal = foodGrid
+#     heuristic = 0
+#     possibilities = util.PriorityQueue()
+#     while len(goal)>0:
+#         for p in pos:
+#             for g in goal:
+#                 t = myDistance(p,g)
+#                 possibilities.push((g,t),t)
+#         if possibilities.isEmpty():
+#             return 0
+#         thisMin,thisT = possibilities.pop()
+#         goal.remove(thisMin)
+#         possibilities = util.PriorityQueue()
+#         pos.append(thisMin)
+#         heuristic += thisT
+#     if heuristic < 0:
+#         return 0
+#     return heuristic

@@ -1,11 +1,10 @@
-
 from captureAgents import CaptureAgent
 import random, time, util
 from game import Directions
 import game
 import searchAgents
 from baselineTeam import DefensiveReflexAgent
-#from searchAgents import FoodSearchProblem, foodHeuristic, manhattanHeuristic
+from searchAgents import  manhattanHeuristic, SearchAgent,PositionSearchProblem 
 import search
 
 def createTeam(firstIndex, secondIndex, isRed):
@@ -25,7 +24,7 @@ def createTeam(firstIndex, secondIndex, isRed):
   behavior is what you want for the nightly contest.
   """
   # The following line is an example only; feel free to change it.
-  return [OffensiveAgent(firstIndex), OffensiveAgent(secondIndex)]
+  return [OffensiveAgent(firstIndex), DefensiveAgent(secondIndex)]
 
 class OffensiveAgent(CaptureAgent):
 
@@ -59,7 +58,7 @@ class OffensiveAgent(CaptureAgent):
         #CHOOSE GOAL Here
         if self.foodEaten <= 5 and not self.first:
             #while foodEaten is less than 5 keep eating
-            goal= self.closest(currObs,foodList,mypos)
+            goal= self.closest(foodList,mypos)
         elif self.isPacman and not self.first :
             #defend and return food
             goal = self.closest(currObs,defendedFood,mypos)
@@ -79,7 +78,7 @@ class OffensiveAgent(CaptureAgent):
         else:
             action = random.choice(gameState.getLegalActions(self.index))
         return action
-    def closest(self, gameState, foodList,mypos):
+    def closest(self,foodList,mypos):
         #print point
         dist = []
         for point in foodList:
@@ -88,4 +87,61 @@ class OffensiveAgent(CaptureAgent):
             dist+= [(point,self.getMazeDistance(mypos, point))]
         minp,_ =  min(dist, key = lambda t: t[1])
         return minp
+
+
+class DefensiveAgent(OffensiveAgent):
+
+  def __init__( self, index, timeForComputing = .1 ):
+    OffensiveAgent.__init__( self, index, timeForComputing)
+    
+    self.visibleAgents = []
+    
+  
+  def chooseAction(self,gameState):
+    currObs = self.getCurrentObservation()
+    self.position = currObs.getAgentPosition(self.index)
+    opponents = self.getOpponents(currObs)
+    
+    defendedFood = self.getFoodYouAreDefending(currObs).asList(True)
+
+    # if not enemies around go around
+    # for i in opponents:
+      # if not currObs.getAgentPosition(i):
+      #   continue
+    for i in opponents:
+      self.visibleAgents += [currObs.getAgentPosition(i)]
+    
+    if self.visibleAgents[0] == None and self.visibleAgents[1] == None:
+      # wander around 
+      closestFood = self.closest(defendedFood,self.position)
+      # defendingProblem = searchAgents.AnyFoodSearchProblem(currObs, self.index , defendedFood, closestFood,self.visibleAgents,opponents)
+      # posProb = PositionSearchProblem(currObs, costFn = lambda x: 1, closestFood, start=None, warn=True, visualize=True)
+      
+      defendingProblem = PositionSearchProblem(currObs, self.index, closestFood)
+
+      
+    # goal is to kill pacman
+    else:
+      # opponentsDist=[]
+      # for i in self.visibleAgents:
+        # if i is None:
+        #   continue
+      
+      print "lito ",self.visibleAgents, self.position
+      closestOpponent =   self.closest(self.visibleAgents, self.position)
+        # self.manhattanDist(self.position, i)
+        # print "adfas", self.position, i
+      # closestOpponent = 
+      # defendingProblem = searchAgents.AnyFoodSearchProblem(currObs, self.index , defendedFood, closestOpponent, self.visibleAgents,opponents)
+      # defendingProblem = DefendingProblem(currObs, guardIndex, defendedFood)
+      # posProb = PositionSearchProblem(currObs, closestOpponent)
+      defendingProblem = PositionSearchProblem(currObs, self.index, closestOpponent)
+    
+    
+    actions = search.aStarSearch(defendingProblem,searchAgents.manhattanHeuristic)
+    return actions[0]
+
+  # def manhattanDist(xy1,xy2):
+  # # manhattan
+  #   return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
