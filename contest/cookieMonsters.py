@@ -1,10 +1,14 @@
+# Students:
+# Name            Student ID.
+# Tou LEE         656128
+# Jaime Martinez  642231
 from captureAgents import CaptureAgent
 import random, time, util
 from game import Directions
 import game
 import searchAgents
 from baselineTeam import DefensiveReflexAgent
-from searchAgents import  manhattanHeuristic, SearchAgent,PositionSearchProblem 
+from searchAgents import  manhattanHeuristic, SearchAgent,PositionSearchProblem
 import search
 
 def createTeam(firstIndex, secondIndex, isRed):
@@ -64,23 +68,33 @@ class OffensiveAgent(CaptureAgent):
         self.foodLeft = len(foodList)
         self.foodEaten = self.allFood - self.foodLeft
         #CHOOSE GOAL Here
-        treshHold = self.foodLeft/3
-        #treshHold = 4
-        if self.foodEaten <=treshHold :
-            #while foodEaten is less than 5 keep eating
+        #threshold = self.foodLeft/3
+        threshold = 4
+
+        #Check for opponents, try to find capsule or go back to base,
+        #whichever is closer.
+        if self.visibleAgents[0] != None or self.visibleAgents[1] != None:
+            d2 = self.returnToBaseGoal(currObs,mypos)
+            if len(capsules)>0:
+                d1 = self.closest(capsules,mypos)
+                goal = self.closest([d1,d2],mypos)
+            else:
+                goal = d2
+        elif self.foodEaten <=threshold :
+            #while foodEaten is less than threshold keep eating
             goal= self.closest(foodList,mypos)
 
         elif self.isPacman :
             #defend and return food
             #goal = self.closest(currObs,defendedFood,mypos)
-            goal = self.getClosestGoal(currObs,mypos)
+            goal = self.returnToBaseGoal(currObs,mypos)
         else:
             #after touching base, return to eat more food
             self.allFood-=self.foodEaten
             self.foodEaten = 0
             goal= self.closest(foodList,mypos)
 
-        #goal =  random.choice(food.asList(True))
+        #Using modified version of AnyFoodSearchProblem, more notes in README.txt
         afsp = searchAgents.AnyFoodSearchProblem(currObs,self.index,food,goal,self.visibleAgents,opponents,self.getMazeDistance)
         self.a = search.aStarSearch(afsp, searchAgents.manhattanHeuristic)
         action = None
@@ -89,8 +103,8 @@ class OffensiveAgent(CaptureAgent):
         else:
             action = random.choice(gameState.getLegalActions(self.index))
         return action
-
-    def getClosestGoal(self,currObs,mypos):
+    #return the closest base point to my pos
+    def returnToBaseGoal(self,currObs,mypos):
         midPoints = []
         if self.isRed:
             w = self.width/2-1
@@ -114,59 +128,39 @@ class OffensiveAgent(CaptureAgent):
         return minp
 
 
+# The security agent that is in charge to kill near by enemies
 class DefensiveAgent(OffensiveAgent):
 
   def __init__( self, index, timeForComputing = .1 ):
     OffensiveAgent.__init__( self, index, timeForComputing)
-    
     self.visibleAgents = []
-    
-  
+
+
   def chooseAction(self,gameState):
     currObs = self.getCurrentObservation()
     self.position = currObs.getAgentPosition(self.index)
     opponents = self.getOpponents(currObs)
-    
     defendedFood = self.getFoodYouAreDefending(currObs).asList(True)
+    self.visibleAgents = []
 
-    # if not enemies around go around
-    # for i in opponents:
-      # if not currObs.getAgentPosition(i):
-      #   continue
+    # Check whether there are visible opponents
     for i in opponents:
-      self.visibleAgents += [currObs.getAgentPosition(i)]
-    
-    if self.visibleAgents[0] == None and self.visibleAgents[1] == None:
-      # wander around 
-      closestFood = self.closest(defendedFood,self.position)
-      # defendingProblem = searchAgents.AnyFoodSearchProblem(currObs, self.index , defendedFood, closestFood,self.visibleAgents,opponents)
-      # posProb = PositionSearchProblem(currObs, costFn = lambda x: 1, closestFood, start=None, warn=True, visualize=True)
-      
-      defendingProblem = PositionSearchProblem(currObs, self.index, closestFood)
+        if currObs.getAgentPosition(i) is not None:
+            self.visibleAgents += [currObs.getAgentPosition(i)]
 
-      
-    # goal is to kill pacman
+    # There are no visible opponents
+    if len(self.visibleAgents) == 0:
+      randomFood = random.choice(defendedFood)
+      defendingProblem = PositionSearchProblem(currObs, self.index, randomFood)
     else:
-      # opponentsDist=[]
-      # for i in self.visibleAgents:
-        # if i is None:
-        #   continue
-      
-      print "lito ",self.visibleAgents, self.position
+    #  Guard ghost sees opponent and finds it to kill it
       closestOpponent =   self.closest(self.visibleAgents, self.position)
-        # self.manhattanDist(self.position, i)
-        # print "adfas", self.position, i
-      # closestOpponent = 
-      # defendingProblem = searchAgents.AnyFoodSearchProblem(currObs, self.index , defendedFood, closestOpponent, self.visibleAgents,opponents)
-      # defendingProblem = DefendingProblem(currObs, guardIndex, defendedFood)
-      # posProb = PositionSearchProblem(currObs, closestOpponent)
       defendingProblem = PositionSearchProblem(currObs, self.index, closestOpponent)
-    
-    
-    actions = search.aStarSearch(defendingProblem,searchAgents.manhattanHeuristic)
-    return actions[0]
 
-  # def manhattanDist(xy1,xy2):
-  # # manhattan
-  #   return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
-
+    actions = search.breadthFirstSearch(defendingProblem)
+    # In case that the random position chosen is where the agent is standing
+    # give a random action
+    if len(actions) != 0:
+        return actions[0]
+    else:
+        return random.choice(gameState.getLegalActions(self.index))

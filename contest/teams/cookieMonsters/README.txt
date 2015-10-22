@@ -26,3 +26,13 @@ of A* to modify the heuristic when a ghost, or some other condition, applies at
 a certain position on the grid.
 
 DEFENSIVE AGENT HERE
+The defensive agent can choose between 2 goals:
+1) When the security ghost does not see other enemies at sight it will go to a
+random defending food, if there is a cluster of food it is very likely that the
+guarding ghost will go there to protect it because there is higher chance that
+the "randomly" selected food location is within a cluster. This behavior will
+continue until it sees another enemy.
+
+2) The second goal happens  when it sees other enemies around the food is
+protecting, it will find the shortest path to get to the enemy, kill the
+pacman and go back to its first behavior.

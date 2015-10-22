@@ -196,7 +196,7 @@ class FoodSearchProblem:
             x, y = int(x + dx), int(y + dy)
             if self.walls[x][y]:
                 return 999999
-            
+
             cost += 1
         return cost
 
@@ -308,7 +308,7 @@ class PositionSearchProblem(search.SearchProblem):
     Note: this search problem is fully specified; you should NOT change it.
     """
 
-    def __init__(self, gameState, agentIndex, costFn = lambda x: 1, goal=(1,1), start=None, warn=True, visualize=True):
+    def __init__(self, gameState, agentIndex,goal, costFn = lambda x: 1 , start=None, warn=True, visualize=True):
         """
         Stores the start and goal.
 
@@ -327,7 +327,7 @@ class PositionSearchProblem(search.SearchProblem):
         #     print 'Warning: this does not look like a regular search maze'
 
         # For display purposes
-        # self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
+        self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
 
     def getStartState(self):
         return self.startState
@@ -335,7 +335,7 @@ class PositionSearchProblem(search.SearchProblem):
     def isGoalState(self, state):
 
         isGoal = state == self.goal
-
+        # print state, self.goal
         # For display purposes only
         # if isGoal and self.visualize:
         #     self._visitedlist.append(state)
@@ -471,9 +471,9 @@ class AnyFoodSearchProblem(PositionSearchProblem):
 # ___________________________
 
 # class DefendingProblem:
-    
+
 #     def __init__(self, currObs, guardIndex, defendedFood):
-    
+
 #         self.walls = currObs.getWalls()
 #         self.startPosition = currObs.getAgentPosition(guardIndex);
 #         self.defendedFood = defendedFood
@@ -492,7 +492,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
 #     def isGoalState(self, state):
 #         if not self.defendedFood:
 #             return True
-        
+
 #         return False
 
 #         # isGoal = state == self.goal
