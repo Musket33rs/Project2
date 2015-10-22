@@ -8,18 +8,7 @@ problem 'STRIPS-LOG-X-1' defined
 
 
 
-Cueing down from goal distance:    1 into depth [1]
-                                   0            
-
-ff: found legal plan as follows
-
-step    0: MOVE P_30_13 P_30_14
-     
-
-time spent:    0.00 seconds instantiating 1088 easy, 0 hard action templates
-               0.00 seconds reachability analysis, yielding 291 facts and 565 actions
-               0.00 seconds creating final representation with 291 relevant facts
-               0.00 seconds building connectivity graph
-               0.00 seconds searching, evaluating 2 states, to a max depth of 1
-               0.00 seconds total time
-
+Cueing down from goal distance:   71 into depth [1][2][3][4]
+                                  69            [1]
+                                  68            [1][2][3][4]
+                                  67            [1]

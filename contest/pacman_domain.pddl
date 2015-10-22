@@ -13,9 +13,12 @@
         ( connected ?x ?y - position )
         ( is_free ?x - position)
         ( enemy_ghost_at ?x - position )
+        ( enemy_pacman_at ?x - position )
         ( food_at ?x - position )
         ( power_at ?x - position)
         ( ghost_scared )
+        ( pacman_dead )
+        
 
     )
 
@@ -24,6 +27,7 @@
         :precondition (and (pacman_at ?x) (connected ?x ?y) (not (enemy_ghost_at ?y)) )
         :effect (and  (pacman_at ?y) 
                       ( not (pacman_at ?x))       
+                      ( not (pacman_dead))
                         
                 )
     )

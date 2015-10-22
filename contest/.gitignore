@@ -59,4 +59,6 @@ docs/_build/
 target/
 
 #prolog
+*.pyc
 *.*~
+score

@@ -1,8 +1,3 @@
-#cookieMonsters.py
-# Students:
-# Name            Student ID.
-# Tou LEE         656128
-# Jaime Martinez  642231
 
 from captureAgents import CaptureAgent
 import random, time, util
@@ -115,3 +110,4 @@ class OffensiveAgent(CaptureAgent):
             dist+= [(point,self.getMazeDistance(mypos, point))]
         minp,_ =  min(dist, key = lambda t: t[1])
         return minp
+
