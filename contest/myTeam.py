@@ -101,7 +101,8 @@ class OffensiveAgent(CaptureAgent):
         self.foodLeft = 0
         self.foodEaten = 0
         self.isPacman = False
-        self.ret =0
+        self.a = []
+        self.do = True
 
     def chooseAction(self,gameState):
         #actions = gameState.getLegalActions(self.index)
@@ -112,7 +113,7 @@ class OffensiveAgent(CaptureAgent):
         visible =[]
         for x in opponents:
             visible += [currObs.getAgentPosition(x)]
-
+        #print visible
         food =  self.getFood(currObs)
         defendedFood = self.getFoodYouAreDefending(currObs).asList(True)
         foodList = food.asList(True)
@@ -122,22 +123,44 @@ class OffensiveAgent(CaptureAgent):
         self.foodLeft = len(foodList)
         self.foodEaten = self.allFood - self.foodLeft
         mypos = gameState.getAgentState(self.index).getPosition()
-        print self.ret
-        if self.ret <= 5:
+    #    print self.foodEaten
+
+        '''if self.foodEaten <= 5:
+        #s    print 'here'
             goal= self.closest(currObs,foodList,mypos)
         elif self.isPacman :
             #defend and return food
             goal = self.closest(currObs,defendedFood,mypos)
+        else:
+            self.allFood-=self.foodEaten
             self.foodEaten = 0
+            goal= self.closest(currObs,foodList,mypos)
+ '''
+        #goal = foodList
+        #fsp = FoodSearchProblem(currObs,self.index,food,goal,visible)
 
-
-        fsp = FoodSearchProblem(currObs,self.index,food,goal)
-    
         #searchAgent = AStarFoodSearchAgent(fsp,foodHeuristic)
     #    searchAgent.registerInitialState(obs,fsp)
-        a = search.aStarSearch(fsp, manhattanHeuristic)
+        
+        if len(self.a)<=2:
+            print 'why', len(self.a)
+            self.do = True
+        if mypos == self.initialPosition:
+            self.do = True
+        if self.do:
+            fsp = None
+        #    print 'hereeeeeeee'
+            goal = foodList
+            #print 'goal',goal
+            fsp = FoodSearchProblem(currObs,self.index,food,goal,visible)
+            self.a = search.aStarSearch(fsp, foodHeuristic)
+        #    print 'self' ,self.a
+            self.do = False
+        act = self.a.pop(0)
+        print 'afterPop ',self.a
 
-        return a[0]
+
+        return act
 
     def getGoal(self,gameState):
         return (0,0)

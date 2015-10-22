@@ -147,20 +147,24 @@ class FoodSearchProblem:
       pacmanPosition: a tuple (x,y) of integers specifying Pacman's position
       foodGrid:       a Grid (see game.py) of either True or False, specifying remaining food
     """
-    def __init__(self, currentGameState,agentIndex,food,goal):
+    def __init__(self, currentGameState,agentIndex,food,goal,visible):
         self.start = (currentGameState.getAgentPosition(agentIndex), food)
+        self.agentIndex = agentIndex
         self.walls = currentGameState.getWalls()
         self.currentGameState = currentGameState
         self._expanded = 0 # DO NOT CHANGE
         self.heuristicInfo = {} # A dictionary for the heuristic to store information
+        print 'init_goal'
         self.goal = goal
+        print 'init_goal' , goal
+        self.visible = visible
 
     def getStartState(self):
         return self.start
 
     def isGoalState(self,state):
-
-        return state[0] == self.goal
+        #print len(state[1].asList(True)),len( self.goal)
+        return len(state[1].asList(True)) <16
 
     def getSuccessors(self, state):
         "Returns successor states, the actions they require, and a cost of 1."
@@ -181,19 +185,33 @@ class FoodSearchProblem:
         """Returns the cost of a particular sequence of actions.  If those actions
         include an illegal move, return 999999"""
         x,y= self.getStartState()[0]
+        yo = (x,y)
+
         cost = 0
         for action in actions:
             # figure out the next state and see whether it's legal
             dx, dy = Actions.directionToVector(action)
             x, y = int(x + dx), int(y + dy)
-            if self.walls[x][y]:
+            if self.walls[x][y] :
                 return 999999
+            elif  self.agentIndex ==0 and self.visible[0]!=None :
+                visPoint = self.visible[0]
+                distancia = myDistance(yo,visPoint)
+                print 'vis[0] dist', visPoint , distancia
+                if distancia < 2:
+                    return 999999
+            elif self.agentIndex ==0 and self.visible[1] != None:
+                visPoint = self.visible[1]
+                distancia = myDistance(yo,visPoint)
+                print 'vis[1] dist', visPoint , distancia
+                if distancia < 2 :
+                    return 99999
             cost += 1
         return cost
 def manhattanHeuristic(position, problem, info={}):
     "The Manhattan distance heuristic for a PositionSearchProblem"
     xy1 = position[0]
-    xy2 = problem.goal
+    xy2 = problem.goal[0]
     return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
 
 
