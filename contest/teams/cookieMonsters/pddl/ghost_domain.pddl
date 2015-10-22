@@ -1,6 +1,6 @@
-%﻿ Tou Lee 656128
-% Jaime Martinez 642231
-﻿(define (domain ghost)
+; Tou LEE 656128
+; Jaime MARTINEZ 642231
+(define (domain ghost)
 
     (:requirements
         :typing
@@ -22,6 +22,8 @@
 
         (ghost_scared)
         (pacman_dead)
+
+        (enemy_ghost_at ?x - position)
 
     )
 
@@ -45,10 +47,5 @@
                     (pacman_dead)
                 )
     )
-
-
-
-
-
 
 )
