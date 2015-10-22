@@ -401,7 +401,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
     method.
     """
 
-    def __init__(self, gameState,agentIndex,food,goal,visible,opponents):
+    def __init__(self, gameState,agentIndex,food,goal,visible,opponents,distFunc):
         "Stores information from the gameState.  You don't need to change this."
         # Store the food for later reference
         self.food = food
@@ -409,12 +409,13 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         self.visible = visible
         self.gameState = gameState
         self.opponents = opponents
+        self.getMazeDistance = distFunc
         # Store info for the PositionSearchProblem (no need to change this)
         self.walls = gameState.getWalls()
+
         self.start = self.startState = gameState.getAgentPosition(agentIndex)
         self.costFn = lambda x: 1
         self._visited, self._visitedlist, self._expanded = {}, [], 0 # DO NOT CHANGE
-
     def isGoalState(self, state):
         """
         The state is Pacman's position. Fill this in with a goal test that will
@@ -441,24 +442,22 @@ class AnyFoodSearchProblem(PositionSearchProblem):
             # Check figure out the next state and see whether its' legal
             dx, dy = Actions.directionToVector(action)
             x, y = int(x + dx), int(y + dy)
+
             if self.visible[0] != None:
                 if self.gameState.getAgentState(self.opponents[0]).isPacman:
-                    print '0'
-                    return 0
+                     return 0
                 if self.visible[0] == (x,y):
                     return 999999999
                 elif myDistance(self.visible[0],(x,y))<4:
-                    print '1'
                     return 999999999
             if self.visible[1] != None:
                 if self.gameState.getAgentState(self.opponents[1]).isPacman:
-                    print '0000'
-                    return 0
+                     return 0
                 if self.visible[1] == (x,y):
                     return 999999999
                 elif myDistance(self.visible[1],(x,y))<4:
-                    print '2'
                     return 999999999
+
             if self.walls[x][y]: return 99999
             cost += self.costFn((x,y))
         return cost

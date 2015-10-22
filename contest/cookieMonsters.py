@@ -30,7 +30,7 @@ def createTeam(firstIndex, secondIndex, isRed):
   behavior is what you want for the nightly contest.
   """
   # The following line is an example only; feel free to change it.
-  return [OffensiveAgent(firstIndex), OffensiveAgent(secondIndex)]
+  return [OffensiveAgent(firstIndex), DefensiveReflexAgent(secondIndex)]
 
 class OffensiveAgent(CaptureAgent):
 
@@ -43,6 +43,7 @@ class OffensiveAgent(CaptureAgent):
         self.isPacman = False
         self.a = []
         self.first = True
+        self.size = 0
 
     def chooseAction(self,gameState):
         currObs = self.getCurrentObservation()
@@ -52,31 +53,39 @@ class OffensiveAgent(CaptureAgent):
         for x in opponents:
             self.visibleAgents += [currObs.getAgentPosition(x)]
         food =  self.getFood(currObs)
+        capsules =  self.getCapsules(currObs)
         foodList= food.asList(True)
+        foodList+=capsules
         defendedFood = self.getFoodYouAreDefending(currObs).asList(True)
+        mypos = gameState.getAgentState(self.index).getPosition()
+        #check and initialise a few variables only at the start of the game
         if self.first:
             self.allFood = len(foodList)
             self.first = False
-            goal =  random.choice(food.asList(True))
+            self.width = currObs.getWalls().width
+            self.height= currObs.getWalls().height
+            self.isRed = currObs.isOnRedTeam(self.index)
+            #goal =  random.choice(food.asList(True))
         self.foodLeft = len(foodList)
         self.foodEaten = self.allFood - self.foodLeft
-        mypos = gameState.getAgentState(self.index).getPosition()
         #CHOOSE GOAL Here
-        if self.foodEaten <= 5 and not self.first:
+        treshHold = self.foodLeft/3
+        #treshHold = 4
+        if self.foodEaten <=treshHold :
             #while foodEaten is less than 5 keep eating
-            goal= self.closest(currObs,foodList,mypos)
-        elif self.isPacman and not self.first :
+            goal= self.closest(foodList,mypos)
+        elif self.isPacman :
             #defend and return food
-            goal = self.closest(currObs,defendedFood,mypos)
-        elif not self.first:
+            #goal = self.closest(currObs,defendedFood,mypos)
+            goal = self.getClosestGoal(currObs,mypos)
+        else:
             #after touching base, return to eat more food
             self.allFood-=self.foodEaten
             self.foodEaten = 0
-            goal= self.closest(currObs,foodList,mypos)
+            goal= self.closest(foodList,mypos)
 
         #goal =  random.choice(food.asList(True))
-        afsp = searchAgents.AnyFoodSearchProblem(currObs,self.index,food,goal,self.visibleAgents,opponents)
-
+        afsp = searchAgents.AnyFoodSearchProblem(currObs,self.index,food,goal,self.visibleAgents,opponents,self.getMazeDistance)
         self.a = search.aStarSearch(afsp, searchAgents.manhattanHeuristic)
         action = None
         if len(self.a) != 0:
@@ -84,7 +93,20 @@ class OffensiveAgent(CaptureAgent):
         else:
             action = random.choice(gameState.getLegalActions(self.index))
         return action
-    def closest(self, gameState, foodList,mypos):
+    def getClosestGoal(self,currObs,mypos):
+        midPoints = []
+        if self.isRed:
+            w = self.width/2-1
+        else:
+            w = self.width/2+1
+        for i in range(self.height):
+            if currObs.hasWall(w,i):
+                continue
+            else:
+                midPoints+=[(w,i)]
+        return self.closest(midPoints,mypos)
+
+    def closest(self, foodList,mypos):
         #print point
         dist = []
         for point in foodList:
