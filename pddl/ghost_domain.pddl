@@ -13,11 +13,11 @@
     (:predicates
         (ghost_at ?x - position)
         (pacman_at ?x - position)
-        
+
         ;not really needed for the ghost domain
         (food_at ?x - position)
         (power_at ?x - position)
-        
+
         (connected ?x ?y - position)
 
         (ghost_scared)
