@@ -129,8 +129,8 @@ class OffensiveAgent(CaptureAgent):
         self.foodEaten = self.allFood - self.foodLeft
         mypos = gameState.getAgentState(self.index).getPosition()
     #    print self.foodEaten
-
-        '''if self.foodEaten <= 5:
+        act = []
+        if self.foodEaten <= 5:
         #s    print 'here'
             goal= self.closest(currObs,foodList,mypos)
         elif self.isPacman :
@@ -146,7 +146,7 @@ class OffensiveAgent(CaptureAgent):
 
         #searchAgent = AStarFoodSearchAgent(fsp,foodHeuristic)
     #    searchAgent.registerInitialState(obs,fsp)
-        
+        '''
         if len(self.a)<=2:
             print 'why', len(self.a)
             self.do = True
@@ -161,6 +161,7 @@ class OffensiveAgent(CaptureAgent):
             self.a = search.aStarSearch(fsp, foodHeuristic)
         #    print 'self' ,self.a
             self.do = False
+        '''
         act = self.a.pop(0)
         print 'afterPop ',self.a
 
