@@ -40,13 +40,16 @@ def createTeam(firstIndex, secondIndex, isRed):
 class FFAgent(CaptureAgent):
     def __init__( self, index, timeForComputing = .1 ):
         CaptureAgent.__init__( self, index, timeForComputing)
+        self.initialFood=None
         self.visibleAgents = []
 
     def createPDDLobjects(self):
         obs = self.getCurrentObservation()
+        if self.initialFood is None:
+            self.amountInitialFood = len(self.getFood(obs).asList(True))
         grid = obs.getWalls()
         locations = grid.asList(False)
-
+        print "score",self.getScore(obs)
         result = ''
         for (x, y) in locations:
             result += 'p_%d_%d ' % (x, y)
@@ -81,9 +84,9 @@ class FFAgent(CaptureAgent):
                 result += '(enemy_ghost_at p_%d_%d) ' % (x, y)
                 # if distances[i] < 2:
                 #     result += '(ghost_near p_%d_%d) ' % (x, y)
-            # else:
-            #     self.visibleAgents.append(i)
-            #     result += '(enemy_pacman_at p_%d_%d) ' % (x, y)
+            else:
+                self.visibleAgents.append(i)
+                result += '(enemy_pacman_at p_%d_%d) ' % (x, y)
 
         team = self.getTeam(obs)
         teamPos = []
@@ -126,14 +129,15 @@ class FFAgent(CaptureAgent):
 
     def createPDDLgoal(self):
         obs = self.getCurrentObservation()
-        if obs.getAgentState(self.index).isPacman is False:
-            result = '(ghost_at p_30_14)'
-        else:
-            result = '(pacman_at p_30_14)' 
+        # if obs.getAgentState(self.index).isPacman is False:
+        #     result = '(ghost_at p_30_14)'
+        # else:
+        #     result = '(pacman_at p_30_14)' 
 
-        # result = ''
-        # obs = self.getCurrentObservation()
-        # food = self.getFood(obs).asList(True)
+        result = ''
+        
+        obs = self.getCurrentObservation()
+        food = self.getFood(obs).asList(True)
         # for (x, y) in food:
         #     if self.closest(obs, (x, y)):
         #         result += '(not (food_at p_%d_%d)) ' % (x,y)
@@ -145,11 +149,37 @@ class FFAgent(CaptureAgent):
         # grid = obs.getWalls()
         # goal_x = grid.width/2 + int(not self.red)
         # pos = obs.getAgentState(self.index).getPosition()
-        # # result += '(AGENT_AT p_%d_%d) ' % (goal_x,
-        # result += '(ghost_at p_%d_%d) ' % (goal_x,
-        #                                     min([y for y in range(grid.height)
-        #                                          if not grid[goal_x][y]],
-        #                                          key=lambda y: self.getMazeDistance((goal_x, y), pos)))
+        # result += '(AGENT_AT p_%d_%d) ' % (goal_x,
+        if obs.getAgentState(self.index).isPacman is False:
+            
+            result += '(ghost_at p_30_14) '
+            # result += '(ghost_at p_%d_%d) ' % (goal_x,
+            #                                 min([y for y in range(grid.height)
+            #                                      if not grid[goal_x][y]],
+            #                                      key=lambda y: self.getMazeDistance((goal_x, y), pos)))
+        else:
+            for (x, y) in food:
+                if self.closest(obs, (x, y)):
+                    result += '(not (food_at p_%d_%d)) ' % (x,y)
+
+            capsule = self.getCapsules(obs)
+            for (x, y) in capsule:
+                if self.closest(obs, (x, y)):
+                    result += '(not (power_at p_%d_%d)) ' % (x,y)
+            grid = obs.getWalls()
+            goal_x = grid.width/2 + int(not self.red)
+            pos = obs.getAgentState(self.index).getPosition()    
+
+            result += '(pacman_at p_%d_%d) ' % (goal_x,
+                                            min([y for y in range(grid.height)
+                                                 if not grid[goal_x][y]],
+                                                 key=lambda y: self.getMazeDistance((goal_x, y), pos)))
+
+
+            # result += '(ghost_at p_%d_%d) ' % (goal_x,
+            #                                 min([y for y in range(grid.height)
+            #                                      if not grid[goal_x][y]],
+            #                                      key=lambda y: self.getMazeDistance((goal_x, y), pos)))
         return result
 
     def generatePDDLproblem(self):
@@ -176,7 +206,7 @@ class FFAgent(CaptureAgent):
         if obs.getAgentState(self.index).isPacman is False:
             lines.append("   (:goal \n")
             if len(self.visibleAgents) != 0:
-                lines.append("  (pacman_dead) \n")
+                lines.append("  (enemy_pacman_dead) \n")
             else:
                 lines.append("  ( and  \n")
                 lines.append(self.createPDDLgoal() + "\n")
@@ -188,10 +218,12 @@ class FFAgent(CaptureAgent):
         else:
             lines.append("   (:goal \n")
             # lines.append("     ( and (pacman_at p_1_4)  \n")
-            # lines.append("     ( and (not (pacman_dead))  \n")
+
+            if 
+            lines.append("     ( and (not (pacman_dead))  \n")
             lines.append(self.createPDDLgoal() + "\n")
             lines.append("     )\n")
-            # lines.append("   )\n")
+            lines.append("   )\n")
 
         lines.append(")\n")
         cd = os.path.dirname(os.path.abspath(__file__))
@@ -271,7 +303,7 @@ class FFAgent(CaptureAgent):
             return successor
 
     def closest(self, gameState, point):
-        print point
+        # print point
         mypos = gameState.getAgentState(self.index).getPosition()
         mydist = self.getMazeDistance(mypos, point)
         mindist = min(self.getMazeDistance(gameState.getAgentState(t).getPosition(), point)

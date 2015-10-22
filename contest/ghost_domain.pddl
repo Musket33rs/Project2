@@ -12,6 +12,7 @@
     (:predicates
         (ghost_at ?x - position)
         (pacman_at ?x - position)
+        (enemy_pacman_at ?x - position)
         
         ;not really needed for the ghost domain
         (food_at ?x - position)
@@ -20,7 +21,7 @@
         (connected ?x ?y - position)
 
         (ghost_scared)
-        (pacman_dead)
+        (enemy_pacman_dead)
 
         (enemy_ghost_at ?x - position)
 
@@ -42,8 +43,8 @@
                     (ghost_at ?y)
                     ;(pacman_at p_11)
                     (not (ghost_at ?x))
-                    (not (pacman_at ?y))
-                    (pacman_dead)
+                    (not (enemy_pacman_at ?y))
+                    (enemy_pacman_dead)
                 )
     )
 
